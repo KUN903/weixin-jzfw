@@ -1,0 +1,12 @@
+<!-- pages/address-list/address-list.wxml -->
+<view class="page-addr">
+  <view wx:if="{{addresses.length === 0}}" class="empty-state"><text class="icon">📍</text><text class="text">暂无收货地址</text></view>
+  <view class="addr-item" wx:for="{{addresses}}" wx:key="id" data-id="{{item.id}}" bindtap="onEdit">
+    <view class="flex-between">
+      <text class="addr-name">{{item.contact_name}} <text class="addr-phone">{{item.contact_phone}}</text></text>
+      <text class="addr-tag" wx:if="{{item.is_default}}">默认</text>
+    </view>
+    <text class="addr-detail">{{item.province}}{{item.city}}{{item.district}}{{item.detail}}</text>
+  </view>
+  <view class="add-btn" bindtap="onAdd">+ 新增地址</view>
+</view>

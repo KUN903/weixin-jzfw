@@ -1,0 +1,19 @@
+<!-- pages/search/search.wxml -->
+<view class="page-search">
+  <view class="search-bar">
+    <view class="search-box"><text class="search-icon">🔍</text><input class="search-input" placeholder="搜索服务" value="{{keyword}}" bindinput="onInput" bindconfirm="onSearch" focus /></view>
+    <text class="search-btn" bindtap="onSearch">搜索</text>
+  </view>
+  <view wx:if="{{!searched}}">
+    <view wx:if="{{history.length > 0}}" class="search-block"><view class="flex-between" style="margin-bottom: 16rpx;"><text class="block-title">历史搜索</text><text class="clear-btn" bindtap="onClearHistory">清除</text></view><view class="keyword-row"><text class="keyword" wx:for="{{history}}" wx:key="*this" data-kw="{{item}}" bindtap="onTapKeyword">{{item}}</text></view></view>
+    <view class="search-block"><text class="block-title">热门搜索</text><view class="keyword-row"><text class="keyword" wx:for="{{hotKeywords}}" wx:key="*this" data-kw="{{item}}" bindtap="onTapKeyword">{{item}}</text></view></view>
+  </view>
+  <view wx:if="{{searched}}">
+    <view wx:if="{{loading}}" class="loading-hint">搜索中...</view>
+    <view wx:elif="{{results.length === 0}}" class="empty-state"><text class="icon">🔍</text><text class="text">未找到相关服务</text></view>
+    <view class="result-item" wx:for="{{results}}" wx:key="id" data-id="{{item.id}}" bindtap="onTapResult">
+      <view class="res-cover"><text>{{item.name.substring(0,2)}}</text></view>
+      <view class="res-info"><text class="res-name">{{item.name}}</text><view><text class="price-symbol">¥</text><text class="price-value">{{item.price}}</text><text class="price-unit">/{{item.unit}}</text></view></view>
+    </view>
+  </view>
+</view>

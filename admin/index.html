@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家政上门服务 - 后台管理</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;background:#f0f2f5;display:flex;min-height:100vh}
+/* 左侧导航 */
+.sidebar{width:220px;background:#001529;color:#fff;flex-shrink:0;padding:20px 0}
+.logo{padding:20px 24px;font-size:20px;font-weight:bold;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:10px}
+.logo span{color:#07C160}
+.nav-item{padding:14px 24px;cursor:pointer;display:flex;align-items:center;font-size:14px;color:rgba(255,255,255,0.65);transition:all .3s}
+.nav-item:hover,.nav-item.active{color:#fff;background:rgba(7,193,96,0.2)}
+.nav-item .icon{font-size:18px;margin-right:10px;width:22px;text-align:center}
+/* 主内容 */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.topbar{background:#fff;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,0.08)}
+.topbar-title{font-size:18px;font-weight:bold;color:#333}
+.content{padding:24px;flex:1}
+/* 卡片 */
+.card{background:#fff;border-radius:8px;padding:24px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.card-title{font-size:16px;font-weight:bold;margin-bottom:16px;color:#333;border-left:3px solid #07C160;padding-left:10px}
+/* 看板统计 */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:20px}
+.stat-card{background:#fff;border-radius:8px;padding:20px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.06);cursor:pointer;transition:all .2s}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.stat-value{font-size:32px;font-weight:bold;color:#333}
+.stat-label{font-size:13px;color:#999;margin-top:8px}
+.stat-card.green .stat-value{color:#07C160}
+.stat-card.blue .stat-value{color:#1989FA}
+.stat-card.orange .stat-value{color:#FF8F1F}
+.stat-card.red .stat-value{color:#FA5151}
+/* 表格 */
+table{width:100%;border-collapse:collapse}
+th{background:#fafafa;padding:12px 14px;text-align:left;font-size:13px;color:#666;border-bottom:2px solid #f0f0f0;white-space:nowrap}
+td{padding:12px 14px;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0}
+tr:hover td{background:#f9f9f9}
+/* 按钮 */
+.btn{padding:6px 16px;border-radius:4px;border:none;cursor:pointer;font-size:13px;transition:all .2s}
+.btn:hover{opacity:.85}
+.btn-primary{background:#07C160;color:#fff}
+.btn-default{background:#f0f0f0;color:#666}
+.btn-danger{background:#FA5151;color:#fff}
+.btn-warning{background:#FF8F1F;color:#fff}
+.btn-info{background:#1989FA;color:#fff}
+.btn-sm{padding:3px 10px;font-size:12px}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap}
+/* 表单 */
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;color:#666;margin-bottom:6px}
+.form-control{width:100%;padding:8px 12px;border:1px solid #d9d9d9;border-radius:4px;font-size:13px;transition:border .2s}
+.form-control:focus{outline:none;border-color:#07C160;box-shadow:0 0 0 2px rgba(7,193,96,0.1)}
+select.form-control{background:#fff}
+textarea.form-control{min-height:80px;resize:vertical}
+/* 标签 */
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;margin-right:4px}
+.tag-pending{background:#FFF3E0;color:#FF8F1F}
+.tag-accepted{background:#E3F2FD;color:#1989FA}
+.tag-serving{background:#E8F8EF;color:#07C160}
+.tag-completed{background:#F3E5F5;color:#9C27B0}
+.tag-finished{background:#f5f5f5;color:#999}
+.tag-cancelled{background:#FFEBEE;color:#FA5151}
+.tag-active{background:#E8F8EF;color:#07C160}
+.tag-done{background:#f5f5f5;color:#999}
+.tag-danger{background:#FFEBEE;color:#FA5151}
+/* 模态框 */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:12px;padding:28px;width:600px;max-height:85vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.15)}
+.modal-title{font-size:18px;font-weight:bold;margin-bottom:20px}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+/* 搜索栏 */
+.search-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.search-input{flex:1;min-width:200px;padding:8px 12px;border:1px solid #d9d9d9;border-radius:4px;font-size:13px}
+/* 详情面板 */
+.detail-section{margin-bottom:20px}
+.detail-section h4{font-size:15px;color:#333;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #f0f0f0}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.detail-item{display:flex;font-size:13px;padding:6px 0}
+.detail-label{color:#999;min-width:80px;flex-shrink:0}
+.detail-value{color:#333;font-weight:500}
+/* 分页 */
+.pagination{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px}
+.pagination .page-btn{padding:6px 12px;border:1px solid #d9d9d9;border-radius:4px;cursor:pointer;font-size:13px;background:#fff}
+.pagination .page-btn.active{background:#07C160;color:#fff;border-color:#07C160}
+.pagination .page-info{font-size:13px;color:#999}
+/* 筛选标签 */
+.filter-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-tab{padding:6px 16px;border-radius:20px;font-size:13px;cursor:pointer;border:1px solid #e0e0e0;background:#fff;color:#666;transition:all .2s}
+.filter-tab:hover{border-color:#07C160;color:#07C160}
+.filter-tab.active{background:#07C160;color:#fff;border-color:#07C160}
+/* 响应式 */
+@media(max-width:768px){
+  .sidebar{width:60px}
+  .logo,.nav-item{font-size:0;padding:14px 10px;justify-content:center}
+  .nav-item .icon{font-size:22px;margin-right:0}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .detail-grid{grid-template-columns:1fr}
+}
+.loading{text-align:center;padding:40px;color:#999}
+.empty-state{text-align:center;padding:60px;color:#ccc;font-size:14px}
+</style>
+</head>
+<body>
+
+<!-- 侧边栏 -->
+<div class="sidebar">
+  <div class="logo">🏠<span>家政后台</span></div>
+  <div class="nav-item active" data-page="dashboard">
+    <span class="icon">📊</span>数据看板
+  </div>
+  <div class="nav-item" data-page="orders">
+    <span class="icon">📦</span>订单管理
+  </div>
+  <div class="nav-item" data-page="services">
+    <span class="icon">📋</span>服务管理
+  </div>
+  <div class="nav-item" data-page="workers">
+    <span class="icon">👨‍🔧</span>师傅管理
+  </div>
+  <div class="nav-item" data-page="users">
+    <span class="icon">👥</span>用户管理
+  </div>
+  <div class="nav-item" data-page="reviews">
+    <span class="icon">⭐</span>评价管理
+  </div>
+  <div class="nav-item" data-page="coupons">
+    <span class="icon">🎫</span>优惠券管理
+  </div>
+  <div class="nav-item" data-page="merchants">
+    <span class="icon">🏪</span>商家管理
+  </div>
+  <div class="nav-item" data-page="categories">
+    <span class="icon">📑</span>分类管理
+  </div>
+</div>
+
+<!-- 主内容区 -->
+<div class="main">
+  <div class="topbar">
+    <span class="topbar-title" id="pageTitle">📊 数据看板</span>
+    <span style="font-size:13px;color:#999">家政上门服务平台 v1.0</span>
+  </div>
+  <div class="content" id="mainContent">
+    <div class="loading">加载中...</div>
+  </div>
+</div>
+
+<!-- 模态框 -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// ========== 全局配置 ==========
+const API_URL = 'https://cloud1-d0gp6uby24f1cac99.service.tcloudbase.com/adminApi';
+
+// ========== 页面路由 ==========
+const pages = {
+  dashboard: { title: '📊 数据看板', render: renderDashboard },
+  services: { title: '📋 服务管理', render: renderServices },
+  orders: { title: '📦 订单管理', render: renderOrders },
+  workers: { title: '👨‍🔧 师傅管理', render: renderWorkers },
+  users: { title: '👥 用户管理', render: renderUsers },
+  reviews: { title: '⭐ 评价管理', render: renderReviews },
+  coupons: { title: '🎫 优惠券管理', render: renderCoupons },
+  merchants: { title: '🏪 商家管理', render: renderMerchants },
+  categories: { title: '📑 分类管理', render: renderCategories }
+};
+
+let currentPage = 'dashboard';
+
+// 导航事件
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    this.classList.add('active');
+    currentPage = this.dataset.page;
+    document.getElementById('pageTitle').textContent = pages[currentPage].title;
+    pages[currentPage].render();
+  });
+});
+
+// 模态框
+function showModal(html) {
+  document.getElementById('modalBox').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ========== API 请求 ==========
+async function callAdminAPI(action, data = {}) {
+  try {
+    const resp = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, data })
+    });
+    const result = await resp.json();
+    if (result.statusCode === 401) {
+      alert('登录已过期，请重新登录');
+      return null;
+    }
+    return result;
+  } catch (err) {
+    console.error('API Error:', err);
+    return { success: false, message: 'API不可用' };
+  }
+}
+
+// ========== 数据看板 ==========
+async function renderDashboard() {
+  const result = await callAdminAPI('getDashboard');
+  const d = (result && result.success) ? result.data : {
+    orderStats: { total: 0, pending: 0, accepted: 0, serving: 0, completed: 0, finished: 0, cancelled: 0, total_amount: 0 },
+    todayStats: { today_orders: 0, today_amount: 0 },
+    serviceCount: 0, workerCount: 0, workerOnline: 0, userCount: 0, incomeTrend: []
+  };
+  
+  let html = `<div class="stat-grid">
+    <div class="stat-card green" onclick="navigateToPage('orders','pending')"><div class="stat-value">${d.todayStats?.today_orders || 0}</div><div class="stat-label">今日订单</div></div>
+    <div class="stat-card blue"><div class="stat-value">¥${(d.todayStats?.today_amount || 0).toFixed(0)}</div><div class="stat-label">今日收入</div></div>
+    <div class="stat-card orange" onclick="navigateToPage('orders','pending')"><div class="stat-value">${d.orderStats?.pending || 0}</div><div class="stat-label">待接单</div></div>
+    <div class="stat-card green" onclick="navigateToPage('orders','serving')"><div class="stat-value">${d.orderStats?.serving || 0}</div><div class="stat-label">服务中</div></div>
+    <div class="stat-card" onclick="navigateToPage('orders')"><div class="stat-value">${d.orderStats?.total || 0}</div><div class="stat-label">本月订单</div></div>
+    <div class="stat-card"><div class="stat-value">¥${(d.orderStats?.total_amount || 0).toFixed(0)}</div><div class="stat-label">本月收入</div></div>
+    <div class="stat-card blue" onclick="navigateToPage('services')"><div class="stat-value">${d.serviceCount || 0}</div><div class="stat-label">服务项目</div></div>
+    <div class="stat-card"><div class="stat-value">${d.workerOnline || 0}/${d.workerCount || 0}</div><div class="stat-label">在线师傅</div></div>
+  </div>`;
+  
+  html += `<div class="card"><div class="card-title">近7天收入趋势</div><canvas id="incomeChart" height="220"></canvas></div>`;
+  
+  html += `<div class="card"><div class="card-title">本月订单状态分布</div>
+    <table><tr><th>状态</th><th>数量</th><th>占比</th></tr>
+    <tr onclick="navigateToPage('orders','pending')" style="cursor:pointer"><td><span class="tag tag-pending">待接单</span></td><td>${d.orderStats?.pending || 0}</td><td>${d.orderStats?.total ? ((d.orderStats.pending/d.orderStats.total)*100).toFixed(1) : 0}%</td></tr>
+    <tr onclick="navigateToPage('orders','accepted')" style="cursor:pointer"><td><span class="tag tag-accepted">已接单</span></td><td>${d.orderStats?.accepted || 0}</td><td>${d.orderStats?.total ? ((d.orderStats.accepted/d.orderStats.total)*100).toFixed(1) : 0}%</td></tr>
+    <tr onclick="navigateToPage('orders','serving')" style="cursor:pointer"><td><span class="tag tag-serving">服务中</span></td><td>${d.orderStats?.serving || 0}</td><td>${d.orderStats?.total ? ((d.orderStats.serving/d.orderStats.total)*100).toFixed(1) : 0}%</td></tr>
+    <tr onclick="navigateToPage('orders','completed')" style="cursor:pointer"><td><span class="tag tag-completed">待评价</span></td><td>${d.orderStats?.completed || 0}</td><td>${d.orderStats?.total ? ((d.orderStats.completed/d.orderStats.total)*100).toFixed(1) : 0}%</td></tr>
+    <tr onclick="navigateToPage('orders','finished')" style="cursor:pointer"><td><span class="tag tag-finished">已完成</span></td><td>${d.orderStats?.finished || 0}</td><td>${d.orderStats?.total ? ((d.orderStats.finished/d.orderStats.total)*100).toFixed(1) : 0}%</td></tr>
+  </table></div>`;
+
+  document.getElementById('mainContent').innerHTML = html;
+
+  setTimeout(() => {
+    const ctx = document.getElementById('incomeChart');
+    if (ctx && d.incomeTrend && d.incomeTrend.length > 0) {
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: d.incomeTrend.map(i => i.day?.slice(5) || ''),
+          datasets: [{
+            label: '收入(元)',
+            data: d.incomeTrend.map(i => parseFloat(i.amount) || 0),
+            borderColor: '#07C160', backgroundColor: 'rgba(7,193,96,0.1)',
+            fill: true, tension: 0.3
+          }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+      });
+    }
+  }, 100);
+}
+
+// 导航到指定页面并设置筛选
+function navigateToPage(page, filter) {
+  window.orderFilter = filter || '';
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const targetNav = document.querySelector(`.nav-item[data-page="${page}"]`);
+  if (targetNav) targetNav.classList.add('active');
+  currentPage = page;
+  document.getElementById('pageTitle').textContent = pages[currentPage].title;
+  pages[currentPage].render();
+}
+
+// ========== 服务管理 ==========
+async function renderServices() {
+  const result = await callAdminAPI('listServices');
+  const list = result?.data?.list || [];
+  const total = result?.data?.total || 0;
+  
+  let html = `<div class="card">
+    <div class="card-title">服务列表（共${total}个）<button class="btn btn-primary btn-sm" style="float:right" onclick="editService()">+ 新增服务</button></div>
+    <table><thead><tr><th>ID</th><th>名称</th><th>分类</th><th>价格</th><th>销量</th><th>评分</th><th>推荐</th><th>状态</th><th>操作</th></tr></thead><tbody>`;
+  
+  list.forEach(s => {
+    html += `<tr>
+      <td>${s.id}</td><td>${s.name || ''}</td><td>${s.category_name || ''}</td>
+      <td>¥${s.price || 0}${s.original_price && s.original_price > s.price ? ' <del style="color:#ccc;font-size:11px">¥'+s.original_price+'</del>' : ''}</td>
+      <td>${s.sales || 0}</td><td>${s.rating || '5.0'}</td>
+      <td>${s.is_recommended ? '<span class="tag tag-active">推荐</span>' : '<span class="tag tag-done">普通</span>'}</td>
+      <td>${s.status === 1 ? '<span class="tag tag-active">上架</span>' : '<span class="tag tag-done">下架</span>'}</td>
+      <td><div class="btn-group">
+        <button class="btn btn-default btn-sm" onclick="editService(${s.id})">编辑</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteService(${s.id})">下架</button>
+      </div></td>
+    </tr>`;
+  });
+  
+  html += `</tbody></table></div>`;
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+async function editService(id) {
+  let service = { id: null, name: '', category_id: 1, price: 99, original_price: '', unit: '次', description: '', service_flow: '', notice: '', specs: '', duration: 60, status: 1, is_recommended: 0 };
+  
+  const catRes = await callAdminAPI('listCategories');
+  const categories = catRes?.data || [];
+
+  if (id) {
+    const result = await callAdminAPI('listServices');
+    service = (result?.data?.list || []).find(s => s.id === id) || service;
+  }
+  
+  let catOptions = categories.map(c => `<option value="${c.id}" ${c.id === service.category_id ? 'selected' : ''}>${c.name}</option>`).join('');
+  
+  showModal(`
+    <div class="modal-title">${id ? '编辑' : '新增'}服务</div>
+    <div class="form-group"><label>服务名称</label><input class="form-control" id="sname" value="${(service.name||'').replace(/"/g,'&quot;')}"></div>
+    <div class="form-group"><label>所属分类</label><select class="form-control" id="scat">${catOptions}</select></div>
+    <div class="form-group"><label>价格</label><input class="form-control" type="number" id="sprice" value="${service.price}"></div>
+    <div class="form-group"><label>原价（划线价）</label><input class="form-control" type="number" id="soprice" value="${service.original_price || ''}"></div>
+    <div class="form-group"><label>单位</label><input class="form-control" id="sunit" value="${service.unit || '次'}"></div>
+    <div class="form-group"><label>服务介绍</label><textarea class="form-control" id="sdesc">${(service.description||'').replace(/</g,'&lt;')}</textarea></div>
+    <div class="form-group"><label>服务流程（每行一步）</label><textarea class="form-control" id="sflow">${(typeof service.service_flow === 'string' ? service.service_flow : (service.service_flow||'').join('\n'))}</textarea></div>
+    <div class="form-group"><label>注意事项</label><textarea class="form-control" id="snotice">${(service.notice||'').replace(/</g,'&lt;')}</textarea></div>
+    <div class="form-group"><label>预计时长（分钟）</label><input class="form-control" type="number" id="sdur" value="${service.duration || 60}"></div>
+    <div class="form-group"><label>是否推荐</label><select class="form-control" id="srec"><option value="1" ${service.is_recommended ? 'selected' : ''}>是</option><option value="0" ${!service.is_recommended ? 'selected' : ''}>否</option></select></div>
+    <div class="form-group"><label>状态</label><select class="form-control" id="sstatus"><option value="1" ${service.status===1?'selected':''}>上架</option><option value="0" ${service.status===0?'selected':''}>下架</option></select></div>
+    <div class="modal-actions">
+      <button class="btn btn-default" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveService('${id || ''}')">保存</button>
+    </div>
+  `);
+}
+
+async function saveService(id) {
+  const data = {
+    id: id || null,
+    name: document.getElementById('sname').value,
+    category_id: parseInt(document.getElementById('scat').value),
+    price: parseFloat(document.getElementById('sprice').value),
+    original_price: document.getElementById('soprice').value ? parseFloat(document.getElementById('soprice').value) : null,
+    unit: document.getElementById('sunit').value,
+    description: document.getElementById('sdesc').value,
+    service_flow: document.getElementById('sflow').value,
+    notice: document.getElementById('snotice').value,
+    duration: parseInt(document.getElementById('sdur').value),
+    is_recommended: parseInt(document.getElementById('srec').value),
+    status: parseInt(document.getElementById('sstatus').value)
+  };
+  await callAdminAPI('saveService', data);
+  closeModal();
+  renderServices();
+}
+
+async function deleteService(id) {
+  if (confirm('确定下架此服务？')) {
+    await callAdminAPI('deleteService', { id });
+    renderServices();
+  }
+}
+
+// ========== 订单管理（增强版） ==========
+let orderFilter = '';
+let orderPage = 1;
+
+async function renderOrders() {
+  if (!window.orderFilter && orderFilter) {
+    window.orderFilter = orderFilter;
+    orderFilter = '';
+  }
+  orderPage = 1;
+  loadOrderList();
+}
+
+async function loadOrderList(newPage) {
+  if (newPage) orderPage = newPage;
+  const status = window.orderFilter || '';
+  
+  const result = await callAdminAPI('listOrders', { status, page: orderPage, pageSize: 20 });
+  const list = result?.data?.list || [];
+  const total = result?.data?.total || 0;
+  const totalPages = Math.ceil(total / 20);
+  
+  const statusMap = {
+    'pending': '<span class="tag tag-pending">待接单</span>',
+    'accepted': '<span class="tag tag-accepted">已接单</span>',
+    'serving': '<span class="tag tag-serving">服务中</span>',
+    'completed': '<span class="tag tag-completed">待评价</span>',
+    'finished': '<span class="tag tag-finished">已完成</span>',
+    'cancelled': '<span class="tag tag-cancelled">已取消</span>',
+    'refunded': '<span class="tag tag-danger">已退款</span>'
+  };
+  
+  let html = `<div class="card">
+    <div class="card-title">订单列表（共${total}个）</div>
+    <div class="filter-tabs">
+      <span class="filter-tab ${!status?'active':''}" onclick="setOrderFilter('')">全部</span>
+      <span class="filter-tab ${status==='pending'?'active':''}" onclick="setOrderFilter('pending')">待接单</span>
+      <span class="filter-tab ${status==='accepted'?'active':''}" onclick="setOrderFilter('accepted')">已接单</span>
+      <span class="filter-tab ${status==='serving'?'active':''}" onclick="setOrderFilter('serving')">服务中</span>
+      <span class="filter-tab ${status==='completed'?'active':''}" onclick="setOrderFilter('completed')">待评价</span>
+      <span class="filter-tab ${status==='finished'?'active':''}" onclick="setOrderFilter('finished')">已完成</span>
+      <span class="filter-tab ${status==='cancelled'?'active':''}" onclick="setOrderFilter('cancelled')">已取消</span>
+    </div>
+    <table><thead><tr><th>订单号</th><th>用户</th><th>服务</th><th>金额</th><th>支付</th><th>日期</th><th>师傅</th><th>状态</th><th>操作</th></tr></thead><tbody>`;
+
+  if (list.length === 0) {
+    html += `<tr><td colspan="9" style="text-align:center;color:#ccc;padding:40px">暂无订单数据</td></tr>`;
+  } else {
+    list.forEach(o => {
+      const payStatus = o.pay_status == 1 ? '<span style="color:#07C160">已付</span>' : '<span style="color:#FA5151">未付</span>';
+      html += `<tr>
+        <td style="font-size:12px">${o.order_no || ''}</td>
+        <td>${o.user_name || '-'}</td>
+        <td>${o.service_name || '-'}</td>
+        <td>¥${o.actual_price || 0}</td>
+        <td>${payStatus}</td>
+        <td>${o.service_date || '-'}</td>
+        <td>${o.worker_name || '<span style="color:#FF8F1F">未分配</span>'}</td>
+        <td>${statusMap[o.status] || o.status}</td>
+        <td><div class="btn-group">
+          ${o.status === 'pending' ? `<button class="btn btn-primary btn-sm" onclick="showAssignModal('${o.order_no}')">派单</button>` : ''}
+          ${o.status === 'pending' || o.status === 'accepted' ? `<button class="btn btn-danger btn-sm" onclick="forceCancelOrder('${o.order_no}')">取消</button>` : ''}
+          ${o.status === 'completed' ? `<button class="btn btn-info btn-sm" onclick="forceFinishOrder('${o.order_no}')">强制完成</button>` : ''}
+          <button class="btn btn-default btn-sm" onclick="showOrderDetail('${o.order_no}')">详情</button>
+        </div></td>
+      </tr>`;
+    });
+  }
+  
+  html += `</tbody></table>`;
+  
+  // 分页
+  if (totalPages > 1) {
+    html += `<div class="pagination">
+      <button class="page-btn" onclick="loadOrderList(${orderPage-1})" ${orderPage<=1?'disabled':''}>上一页</button>
+      <span class="page-info">${orderPage} / ${totalPages}</span>
+      <button class="page-btn" onclick="loadOrderList(${orderPage+1})" ${orderPage>=totalPages?'disabled':''}>下一页</button>
+    </div>`;
+  }
+  
+  html += `</div>`;
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function setOrderFilter(status) {
+  window.orderFilter = status;
+  orderPage = 1;
+  loadOrderList();
+}
+
+async function showAssignModal(orderNo) {
+  const workerRes = await callAdminAPI('listWorkers');
+  const workers = workerRes?.data || [];
+  let opts = workers.map(w => `<option value="${w.id}">${w.name} (${w.city||''} ${w.district||''}) - ${w.rating}分</option>`).join('');
+  
+  showModal(`
+    <div class="modal-title">派单 - ${orderNo}</div>
+    <div class="form-group"><label>选择师傅</label><select class="form-control" id="workerSelect">${opts}</select></div>
+    <div class="modal-actions">
+      <button class="btn btn-default" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="assignOrder('${orderNo}')">确认派单</button>
+    </div>
+  `);
+}
+
+async function assignOrder(orderNo) {
+  const workerId = document.getElementById('workerSelect').value;
+  await callAdminAPI('assignOrder', { orderNo, workerId: parseInt(workerId) });
+  closeModal();
+  loadOrderList();
+}
+
+async function forceCancelOrder(orderNo) {
+  if (confirm('确定强制取消此订单？')) {
+    await callAdminAPI('updateOrderStatus', { orderNo, status: 'cancelled', reason: '管理员强制取消' });
+    loadOrderList();
+  }
+}
+
+async function forceFinishOrder(orderNo) {
+  if (confirm('确定强制完成此订单（跳过评价）？')) {
+    await callAdminAPI('updateOrderStatus', { orderNo, status: 'finished', reason: '管理员强制完成' });
+    loadOrderList();
+  }
+}
+
+async function showOrderDetail(orderNo) {
+  const result = await callAdminAPI('getOrderDetail', { orderNo });
+  const o = result?.data;
+  if (!o) {
+    alert('订单详情加载失败');
+    return;
+  }
+
+  const statusMap = {
+    'pending': '待接单', 'accepted': '已接单', 'serving': '服务中',
+    'completed': '待评价', 'finished': '已完成', 'cancelled': '已取消', 'refunded': '已退款'
+  };
+
+  showModal(`
+    <div class="modal-title">订单详情 - ${orderNo}</div>
+    <div class="detail-section">
+      <h4>基本信息</h4>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="detail-label">订单状态</span><span class="detail-value">${statusMap[o.status] || o.status}</span></div>
+        <div class="detail-item"><span class="detail-label">支付状态</span><span class="detail-value">${o.pay_status == 1 ? '已支付' : '未支付'}</span></div>
+        <div class="detail-item"><span class="detail-label">服务名称</span><span class="detail-value">${o.service_name || '-'}</span></div>
+        <div class="detail-item"><span class="detail-label">实付金额</span><span class="detail-value" style="color:#FA5151">¥${o.actual_price || 0}</span></div>
+        <div class="detail-item"><span class="detail-label">预约日期</span><span class="detail-value">${o.service_date || '-'} ${o.service_time_slot || ''}</span></div>
+        <div class="detail-item"><span class="detail-label">创建时间</span><span class="detail-value">${o.created_at || '-'}</span></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <h4>用户信息</h4>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="detail-label">用户</span><span class="detail-value">${o.user_name || '-'}</span></div>
+        <div class="detail-item"><span class="detail-label">联系人</span><span class="detail-value">${o.contact_name || '-'}</span></div>
+        <div class="detail-item"><span class="detail-label">联系电话</span><span class="detail-value">${o.contact_phone || '-'}</span></div>
+        <div class="detail-item"><span class="detail-label">上门地址</span><span class="detail-value">${o.address_detail || '-'}</span></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <h4>师傅信息</h4>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="detail-label">师傅</span><span class="detail-value">${o.worker_name || '未分配'}</span></div>
+        <div class="detail-item"><span class="detail-label">电话</span><span class="detail-value">${o.worker_phone || '-'}</span></div>
+      </div>
+    </div>
+    ${o.remark ? `<div class="detail-section"><h4>备注</h4><p style="font-size:13px;color:#666">${o.remark}</p></div>` : ''}
+    <div class="modal-actions">
+      <button class="btn btn-default" onclick="closeModal()">关闭</button>
+    </div>
+  `);
+}
+
+// ========== 师傅管理 ==========
+async function renderWorkers() {
+  const result = await callAdminAPI('listWorkers');
+  const list = result?.data || [];
+  
+  let html = `<div class="card">
+    <div class="card-title">师傅列表（共${list.length}人）<button class="btn btn-primary btn-sm" style="float:right" onclick="editWorker()">+ 新增师傅</button></div>
+    <table><thead><tr><th>ID</th><th>姓名</th><th>手机</th><th>城市</th><th>评分</th><th>接单量</th><th>好评率</th><th>状态</th><th>认证</th><th>操作</th></tr></thead><tbody>`;
+
+  list.forEach(w => {
+    html += `<tr>
+      <td>${w.id}</td><td>${w.name}</td><td>${w.phone}</td><td>${w.city||''} ${w.district||''}</td>
+      <td>${w.rating || '5.0'}</td><td>${w.total_orders || 0}</td><td>${w.good_rate || 100}%</td>
+      <td>${w.status === 1 ? '<span class="tag tag-active">在线</span>' : '<span class="tag tag-done">离线</span>'}</td>
+      <td>${w.verify_status === 1 ? '<span class="tag tag-active">已认证</span>' : '<span class="tag tag-pending">待审核</span>'}</td>
+      <td><div class="btn-group">
+        <button class="btn btn-default btn-sm" onclick="editWorker(${w.id})">编辑</button>
+        <button class="btn btn-primary btn-sm" onclick="verifyWorker(${w.id},${w.verify_status===1?0:1})">${w.verify_status===1?'取消认证':'认证'}</button>
+      </div></td>
+    </tr>`;
+  });
+  
+  html += `</tbody></table></div>`;
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+async function editWorker(id) {
+  let worker = { id: null, name: '', phone: '', city: '', district: '', intro: '', service_category_ids: '[1]', status: 1 };
+  if (id) {
+    const result = await callAdminAPI('listWorkers');
+    worker = (result?.data || []).find(w => w.id === id) || worker;
+  }
+  showModal(`
+    <div class="modal-title">${id ? '编辑' : '新增'}师傅</div>
+    <div class="form-group"><label>姓名</label><input class="form-control" id="wname" value="${worker.name}"></div>
+    <div class="form-group"><label>手机号</label><input class="form-control" id="wphone" value="${worker.phone}"></div>
+    <div class="form-group"><label>城市</label><input class="form-control" id="wcity" value="${worker.city||''}"></div>
+    <div class="form-group"><label>区域</label><input class="form-control" id="wdist" value="${worker.district||''}"></div>
+    <div class="form-group"><label>简介</label><textarea class="form-control" id="wintro">${worker.intro||''}</textarea></div>
+    <div class="form-group"><label>服务类目ID（JSON数组）</label><input class="form-control" id="wcatids" value="${worker.service_category_ids||'[1]'}"></div>
+    <div class="form-group"><label>状态</label><select class="form-control" id="wstatus"><option value="1" ${worker.status===1?'selected':''}>在线</option><option value="0" ${worker.status===0?'selected':''}>离线</option></select></div>
+    <div class="modal-actions">
+      <button class="btn btn-default" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveWorker('${id||''}')">保存</button>
+    </div>
+  `);
+}
+
+async function saveWorker(id) {
+  const data = {
+    id: id || null,
+    name: document.getElementById('wname').value,
+    phone: document.getElementById('wphone').value,
+    city: document.getElementById('wcity').value,
+    district: document.getElementById('wdist').value,
+    intro: document.getElementById('wintro').value,
+    service_category_ids: document.getElementById('wcatids').value,
+    status: parseInt(document.getElementById('wstatus').value)
+  };
+  await callAdminAPI('saveWorker', data);
+  closeModal();
+  renderWorkers();
+}
+
+async function verifyWorker(id, status) {
+  await callAdminAPI('verifyWorker', { id, verify_status: status });
+  renderWorkers();
+}
+
+// ========== 用户管理 ==========
+async function renderUsers() {
+  const result = await callAdminAPI('listUsers');
+  const list = result?.data || [];
+  let html = `<div class="card"><div class="card-title">用户列表（共${list.length}人）</div>
+    <table><thead><tr><th>ID</th><th>昵称</th><th>手机</th><th>余额</th><th>积分</th><th>总订单</th><th>注册时间</th></tr></thead><tbody>`;
+  list.forEach(u => {
+    html += `<tr><td>${u.id}</td><td>${u.nickname || '微信用户'}</td><td>${u.phone || '-'}</td><td>¥${u.balance||0}</td><td>${u.points||0}</td><td>${u.total_orders||0}</td><td>${u.created_at||''}</td></tr>`;
+  });
+  html += `</tbody></table></div>`;
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+// ========== 评价管理 ==========
+async function renderReviews() {
+  const result = await callAdminAPI('listReviews');
+  const list = result?.data || [];
+  let html = `<div class="card"><div class="card-title">评价列表（共${list.length}条）</div>
+    <table><thead><tr><th>ID</th><th>用户</th><th>服务</th><th>评分</th><th>内容</th><th>时间</th></tr></thead><tbody>`;
+  list.forEach(r => {
+    html += `<tr><td>${r.id}</td><td>${r.nickname || '-'}</td><td>${r.service_name || '-'}</td><td>${'⭐'.repeat(Math.round(r.rating||5))} ${r.rating}</td><td>${(r.content||'').slice(0,50)}</td><td>${r.created_at||''}</td></tr>`;
+  });
+  html += `</tbody></table></div>`;
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+// ========== 优惠券管理 ==========
+async function renderCoupons() {
+  const result = await callAdminAPI('listCoupons');
+  const list = result?.data || [];
+  let html = `<div class="card"><div class="card-title">优惠券列表<button class="btn btn-primary btn-sm" style="float:right" onclick="editCoupon()">+ 新增优惠券</button></div>
+    <table><thead><tr><th>ID</th><th>名称</th><th>类型</th><th>优惠值</th><th>门槛</th><th>发行总量</th><th>有效期</th><th>状态</th><th>操作</th></tr></thead><tbody>`;
+  list.forEach(c => {
+    html += `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.type==='amount'?'满减':'折扣'}</td>
+      <td>${c.type==='amount'?'¥'+c.discount_value:c.discount_value+'折'}</td>
+      <td>¥${c.condition_price||0}</td><td>${c.total_count||0}</td>
+      <td>${c.valid_days||30}天</td>
+      <td>${c.status?'<span class="tag tag-active">启用</span>':'<span class="tag tag-done">停用</span>'}</td>
+      <td><button class="btn btn-default btn-sm" onclick="editCoupon(${c.id})">编辑</button></td></tr>`;
+  });
+  html += `</tbody></table></div>`;
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+async function editCoupon(id) {
+  let c = { id: null, name: '', type: 'amount', discount_value: 10, condition_price: 0, total_count: 100, valid_days: 30 };
+  if (id) {
+    const result = await callAdminAPI('listCoupons');
+    c = (result?.data || []).find(x => x.id === id) || c;
+  }
+  showModal(`
+    <div class="modal-title">${id ? '编辑' : '新增'}优惠券</div>
+    <div class="form-group"><label>名称</label><input class="form-control" id="cpname" value="${c.name}"></div>
+    <div class="form-group"><label>类型</label><select class="form-control" id="cptype"><option value="amount" ${c.type==='amount'?'selected':''}>满减</option><option value="rate" ${c.type==='rate'?'selected':''}>折扣</option></select></div>
+    <div class="form-group"><label>优惠值</label><input class="form-control" type="number" id="cpval" value="${c.discount_value}"></div>
+    <div class="form-group"><label>使用门槛（满X元可用）</label><input class="form-control" type="number" id="cpcond" value="${c.condition_price}"></div>
+    <div class="form-group"><label>发行数量</label><input class="form-control" type="number" id="cptotal" value="${c.total_count}"></div>
+    <div class="form-group"><label>有效期（天）</label><input class="form-control" type="number" id="cpdays" value="${c.valid_days}"></div>
+    <div class="modal-actions"><button class="btn btn-default" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="saveCoupon('${id||''}')">保存</button></div>
+  `);
+}
+
+async function saveCoupon(id) {
+  await callAdminAPI('saveCoupon', {
+    id: id || null, name: document.getElementById('cpname').value,
+    type: document.getElementById('cptype').value,
+    discount_value: parseFloat(document.getElementById('cpval').value),
+    condition_price: parseFloat(document.getElementById('cpcond').value),
+    total_count: parseInt(document.getElementById('cptotal').value),
+    valid_days: parseInt(document.getElementById('cpdays').value)
+  });
+  closeModal(); renderCoupons();
+}
+
+// ========== 商家管理 ==========
+async function renderMerchants() {
+  const result = await callAdminAPI('listMerchants');
+  const list = result?.data || [];
+  let html = `<div class="card"><div class="card-title">商家列表<button class="btn btn-primary btn-sm" style="float:right" onclick="editMerchant()">+ 新增商家</button></div>
+    <table><thead><tr><th>ID</th><th>名称</th><th>手机</th><th>城市</th><th>评分</th><th>总订单</th><th>余额</th><th>状态</th><th>操作</th></tr></thead><tbody>`;
+  list.forEach(m => {
+    html += `<tr><td>${m.id}</td><td>${m.name}</td><td>${m.phone}</td><td>${m.city||''}</td>
+      <td>${m.rating||'5.0'}</td><td>${m.total_orders||0}</td><td>¥${m.balance||0}</td>
+      <td>${m.status?'<span class="tag tag-active">正常</span>':'<span class="tag tag-done">停用</span>'}</td>
+      <td><button class="btn btn-default btn-sm" onclick="editMerchant(${m.id})">编辑</button></td></tr>`;
+  });
+  html += `</tbody></table></div>`;
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+async function editMerchant(id) {
+  let m = { id: null, name: '', phone: '', city: '', address: '', status: 1 };
+  if (id) {
+    const result = await callAdminAPI('listMerchants');
+    m = (result?.data || []).find(x => x.id === id) || m;
+  }
+  showModal(`
+    <div class="modal-title">${id ? '编辑' : '新增'}商家</div>
+    <div class="form-group"><label>名称</label><input class="form-control" id="mname" value="${m.name}"></div>
+    <div class="form-group"><label>手机</label><input class="form-control" id="mphone" value="${m.phone}"></div>
+    <div class="form-group"><label>城市</label><input class="form-control" id="mcity" value="${m.city||''}"></div>
+    <div class="form-group"><label>地址</label><input class="form-control" id="maddr" value="${m.address||''}"></div>
+    <div class="form-group"><label>状态</label><select class="form-control" id="mstatus"><option value="1" ${m.status?'selected':''}>正常</option><option value="0" ${!m.status?'selected':''}>停用</option></select></div>
+    <div class="modal-actions"><button class="btn btn-default" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="saveMerchant('${id||''}')">保存</button></div>
+  `);
+}
+
+async function saveMerchant(id) {
+  await callAdminAPI('saveMerchant', {
+    id: id || null, name: document.getElementById('mname').value,
+    phone: document.getElementById('mphone').value, city: document.getElementById('mcity').value,
+    address: document.getElementById('maddr').value, status: parseInt(document.getElementById('mstatus').value)
+  });
+  closeModal(); renderMerchants();
+}
+
+// ========== 分类管理 ==========
+async function renderCategories() {
+  const result = await callAdminAPI('listCategories');
+  const list = result?.data || [];
+  let html = `<div class="card"><div class="card-title">分类列表<button class="btn btn-primary btn-sm" style="float:right" onclick="editCategory()">+ 新增分类</button></div>
+    <table><thead><tr><th>ID</th><th>名称</th><th>图标</th><th>排序</th><th>状态</th><th>操作</th></tr></thead><tbody>`;
+  list.forEach(c => {
+    html += `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.icon||''}</td><td>${c.sort_order||0}</td>
+      <td>${c.status?'<span class="tag tag-active">显示</span>':'<span class="tag tag-done">隐藏</span>'}</td>
+      <td><div class="btn-group"><button class="btn btn-default btn-sm" onclick="editCategory(${c.id})">编辑</button><button class="btn btn-danger btn-sm" onclick="deleteCategory(${c.id})">删除</button></div></td></tr>`;
+  });
+  html += `</tbody></table></div>`;
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+async function editCategory(id) {
+  let c = { id: null, name: '', icon: '', sort_order: 0 };
+  if (id) {
+    const result = await callAdminAPI('listCategories');
+    c = (result?.data || []).find(x => x.id === id) || c;
+  }
+  showModal(`
+    <div class="modal-title">${id ? '编辑' : '新增'}分类</div>
+    <div class="form-group"><label>名称</label><input class="form-control" id="catname" value="${c.name}"></div>
+    <div class="form-group"><label>图标（emoji）</label><input class="form-control" id="caticon" value="${c.icon||''}"></div>
+    <div class="form-group"><label>排序</label><input class="form-control" type="number" id="catsort" value="${c.sort_order||0}"></div>
+    <div class="modal-actions"><button class="btn btn-default" onclick="closeModal()">取消</button><button class="btn btn-primary" onclick="saveCategory('${id||''}')">保存</button></div>
+  `);
+}
+
+async function saveCategory(id) {
+  await callAdminAPI('saveCategory', {
+    id: id || null, name: document.getElementById('catname').value,
+    icon: document.getElementById('caticon').value, sort_order: parseInt(document.getElementById('catsort').value)
+  });
+  closeModal(); renderCategories();
+}
+
+async function deleteCategory(id) {
+  if (confirm('确定删除此分类？')) {
+    await callAdminAPI('deleteCategory', { id });
+    renderCategories();
+  }
+}
+
+// ========== 初始化 ==========
+pages.dashboard.render();
+</script>
+</body>
+</html>

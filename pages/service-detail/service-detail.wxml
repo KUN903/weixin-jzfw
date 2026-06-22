@@ -1,0 +1,199 @@
+<!-- pages/service-detail/service-detail.wxml - 服务详情 / 师傅详情 -->
+<view class="page-detail">
+
+<!-- ==================== 服务详情模式 ==================== -->
+<block wx:if="{{pageType === 'service'}}">
+  <scroll-view scroll-y class="detail-scroll">
+    <!-- 封面 -->
+    <view class="cover-section">
+      <image wx:if="{{service.cover_image}}" class="cover-image" src="{{service.cover_image}}" mode="aspectFill"></image>
+      <view class="cover-bg" wx:else>
+        <text class="cover-text">{{service.name || '加载中...'}}</text>
+      </view>
+    </view>
+
+    <!-- 基本信息 -->
+    <view class="card basic-info">
+      <view class="flex-between">
+        <text class="service-title">{{service.name}}</text>
+      </view>
+      <view class="flex-center" style="margin-top: 12rpx;">
+        <text class="price-symbol">¥</text>
+        <text class="price-big">{{service.price}}</text>
+        <text class="price-unit">/{{service.unit}}</text>
+        <text class="price-original" wx:if="{{service.original_price && service.original_price > service.price}}">¥{{service.original_price}}</text>
+        <view class="tag tag-hot" style="margin-left: 12rpx;" wx:if="{{service.original_price && service.original_price > service.price}}">
+          省{{service.original_price - service.price}}元
+        </view>
+      </view>
+      <view class="flex-center" style="margin-top: 12rpx;">
+        <view class="tag tag-primary">⭐{{service.rating || '5.0'}}分</view>
+        <view class="tag tag-primary">已售{{service.sales || 0}}</view>
+        <text class="meta-text" style="margin-left: 16rpx;">预计{{service.duration || 60}}分钟</text>
+      </view>
+    </view>
+
+    <!-- 规格选择 -->
+    <view class="card" wx:if="{{specs.length > 0}}">
+      <text class="card-title">规格选择</text>
+      <view class="spec-group" wx:for="{{specs}}" wx:key="index">
+        <text class="spec-label">{{item.name}}</text>
+        <view class="spec-options">
+          <view class="spec-option {{selectedSpecs[index] === option ? 'active' : ''}}" 
+                wx:for="{{item.options}}" wx:for-item="option" wx:for-index="oi" wx:key="oi"
+                data-group="{{index}}" data-value="{{option}}" bindtap="onSelectSpec">
+            {{option}}
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 服务介绍 -->
+    <view class="card" wx:if="{{service.description}}">
+      <text class="card-title">服务介绍</text>
+      <text class="desc-text">{{service.description}}</text>
+    </view>
+
+    <!-- 服务流程 -->
+    <view class="card" wx:if="{{serviceFlow.length > 0}}">
+      <text class="card-title">服务流程</text>
+      <view class="flow-list">
+        <view class="flow-item" wx:for="{{serviceFlow}}" wx:key="index">
+          <view class="flow-dot">{{index + 1}}</view>
+          <text class="flow-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 注意事项 -->
+    <view class="card" wx:if="{{service.notice}}">
+      <text class="card-title">注意事项</text>
+      <text class="notice-text">{{service.notice}}</text>
+    </view>
+
+    <!-- 用户评价 -->
+    <view class="card" wx:if="{{reviews.length > 0}}">
+      <view class="flex-between" style="margin-bottom: 20rpx;">
+        <text class="card-title" style="margin-bottom: 0;">用户评价（{{reviewCount || 0}}）</text>
+        <text class="more-link" bindtap="onMoreReviews">查看全部 ›</text>
+      </view>
+      <view class="review-item" wx:for="{{reviews}}" wx:key="id">
+        <view class="flex-between">
+          <view class="flex-center">
+            <view class="review-avatar">{{item.avatar_placeholder || '👤'}}</view>
+            <text class="review-nick">{{item.nickname || '匿名用户'}}</text>
+          </view>
+          <text class="review-rating">⭐{{item.rating}}</text>
+        </view>
+        <text class="review-content" wx:if="{{item.content}}">{{item.content}}</text>
+        <text class="review-date">{{item.created_at || ''}}</text>
+      </view>
+    </view>
+
+    <view style="height: 140rpx;"></view>
+  </scroll-view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="bottom-left">
+      <view class="favorite-btn" bindtap="onToggleFavorite">
+        <text>{{isFavorited ? '❤️' : '🤍'}}</text>
+        <text style="font-size: 20rpx;">{{isFavorited ? '已收藏' : '收藏'}}</text>
+      </view>
+    </view>
+    <view class="btn-primary bottom-order-btn" bindtap="onBookNow">立即预约</view>
+  </view>
+</block>
+
+<!-- ==================== 师傅详情模式 ==================== -->
+<block wx:if="{{pageType === 'worker'}}">
+  <scroll-view scroll-y class="detail-scroll">
+    <!-- 师傅头部 -->
+    <view class="worker-header">
+      <view class="worker-header-bg"></view>
+      <view class="worker-header-body">
+        <view class="worker-avatar-large">
+          <text>👨‍🔧</text>
+        </view>
+        <view class="worker-header-info">
+          <view class="worker-header-name">
+            <text class="worker-name-large">{{worker.name || '加载中...'}}</text>
+            <text class="worker-verify" wx:if="{{worker.verify_status === 1}}">✓ 已认证</text>
+          </view>
+          <text class="worker-area">📍 {{worker.district || '上海'}}{{worker.address ? ' · ' + worker.address : ''}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 数据统计 -->
+    <view class="card worker-stats-card">
+      <view class="stat-row">
+        <view class="stat-col">
+          <text class="stat-num">{{workerRatingText || '5.0'}}</text>
+          <text class="stat-label">评分</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-col">
+          <text class="stat-num">{{workerOrderCountText || '0单'}}</text>
+          <text class="stat-label">已接单</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-col">
+          <text class="stat-num">{{workerGoodRateText || '100%'}}</text>
+          <text class="stat-label">好评率</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-col">
+          <text class="stat-num">{{workerServices.length || 0}}</text>
+          <text class="stat-label">可服务项目</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 个人简介 -->
+    <view class="card" wx:if="{{worker.intro}}">
+      <text class="card-title">个人简介</text>
+      <text class="desc-text">{{worker.intro}}</text>
+    </view>
+
+    <!-- 可提供服务 -->
+    <view class="card" wx:if="{{workerServices.length > 0}}">
+      <text class="card-title">可提供服务</text>
+      <view class="worker-service-item" wx:for="{{workerServices}}" wx:key="id" data-id="{{item.id}}" bindtap="onTapWorkerService">
+        <view class="ws-cover">
+          <image wx:if="{{item.cover_image}}" class="ws-cover-img" src="{{item.cover_image}}" mode="aspectFill"></image>
+          <text wx:else class="ws-cover-text">{{item.cp2 || '服务'}}</text>
+        </view>
+        <view class="ws-body">
+          <text class="ws-name">{{item.name}}</text>
+          <view class="ws-tags">
+            <text class="tag tag-primary" wx:if="{{item.rating}}">⭐{{item.rating}}分</text>
+            <text class="tag tag-hot" wx:if="{{item.sales > 1000}}">热销</text>
+          </view>
+          <view class="ws-price-row">
+            <text class="price-symbol">¥</text>
+            <text class="price-value">{{item.price}}</text>
+            <text class="price-unit">/{{item.unit}}</text>
+            <text class="price-original" wx:if="{{item.original_price && item.original_price > item.price}}">¥{{item.original_price}}</text>
+          </view>
+        </view>
+        <view class="ws-btn" data-sid="{{item.id}}" catchtap="onBookWorker">预约</view>
+      </view>
+    </view>
+
+    <view style="height: 140rpx;"></view>
+  </scroll-view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="bottom-left">
+      <view class="phone-btn" bindtap="onCallWorkerPhone">
+        <text style="font-size: 36rpx;">📞</text>
+        <text style="font-size: 20rpx;">电话</text>
+      </view>
+    </view>
+    <view class="btn-primary bottom-order-btn" bindtap="onBookWorker">立即预约</view>
+  </view>
+</block>
+
+</view>

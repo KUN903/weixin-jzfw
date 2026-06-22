@@ -1,0 +1,45 @@
+<!-- pages/category/category.wxml - 分类页 -->
+<view class="page-category">
+  <!-- 左侧分类菜单 -->
+  <scroll-view class="category-sidebar" scroll-y>
+    <view class="sidebar-item {{activeCategoryId === item.id ? 'active' : ''}}" 
+          wx:for="{{categories}}" wx:key="id" 
+          data-id="{{item.id}}" data-name="{{item.name}}" 
+          bindtap="onTapCategory">
+      <text class="sidebar-icon">{{item.icon || ''}}</text>
+      <text class="sidebar-name">{{item.name}}</text>
+    </view>
+  </scroll-view>
+
+  <!-- 右侧服务列表 -->
+  <scroll-view class="service-list" scroll-y>
+    <view class="list-header" wx:if="{{categoryName}}">
+      <text class="list-title">{{categoryName}}</text>
+    </view>
+    <view wx:if="{{loading}}" class="loading-hint">加载中...</view>
+    <view wx:elif="{{services.length === 0}}" class="empty-state">
+      <text class="icon">📋</text>
+      <text class="text">暂无相关服务</text>
+    </view>
+    <view class="service-item" wx:for="{{services}}" wx:key="id" data-id="{{item.id}}" bindtap="onTapService">
+      <view class="service-cover-small">
+        <image wx:if="{{item.cover_image}}" class="cover-image" src="{{item.cover_image}}" mode="aspectFill"></image>
+        <text class="cover-placeholder" wx:else>{{item.cp2 || '服务'}}</text>
+      </view>
+      <view class="service-body">
+        <text class="service-name">{{item.name}}</text>
+        <view class="service-tags">
+          <text class="tag tag-primary" wx:if="{{item.rating}}">⭐{{item.rating}}分</text>
+          <text class="tag tag-hot" wx:if="{{item.sales > 1000}}">热销</text>
+        </view>
+        <view class="service-price-row">
+          <text class="price-symbol">¥</text>
+          <text class="price-value">{{item.price}}</text>
+          <text class="price-unit">/{{item.unit}}</text>
+          <text class="price-original" wx:if="{{item.original_price && item.original_price > item.price}}">¥{{item.original_price}}</text>
+        </view>
+        <text class="service-sales">已售{{item.sales}}</text>
+      </view>
+    </view>
+  </scroll-view>
+</view>

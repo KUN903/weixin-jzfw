@@ -1,0 +1,8 @@
+{
+  "name": "adminApi",
+  "version": "1.0.0",
+  "description": "后台管理API云函数（HTTP模式）",
+  "dependencies": {
+    "@cloudbase/node-sdk": "latest"
+  }
+}

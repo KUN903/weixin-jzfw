@@ -1,0 +1,9 @@
+<!-- pages/favorites/favorites.wxml -->
+<view class="page-favorites">
+  <view wx:if="{{loading}}" class="loading-hint">加载中...</view>
+  <view wx:elif="{{favorites.length === 0}}" class="empty-state"><text class="icon">❤️</text><text class="text">暂无收藏</text></view>
+  <view class="fav-item" wx:for="{{favorites}}" wx:key="fid" data-id="{{item.id}}" bindtap="onTap">
+    <view class="fav-cover"><text>{{item.name.substring(0,2)}}</text></view>
+    <view class="fav-info"><text class="fav-name">{{item.name}}</text><view class="flex-center" style="margin-top: 8rpx;"><text class="price-symbol">¥</text><text class="price-value">{{item.price}}</text><text class="price-unit">/{{item.unit}}</text></view></view>
+  </view>
+</view>

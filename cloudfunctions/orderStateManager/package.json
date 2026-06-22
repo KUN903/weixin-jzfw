@@ -1,0 +1,8 @@
+{
+  "name": "orderStateManager",
+  "version": "1.0.0",
+  "description": "订单状态定时管理器",
+  "dependencies": {
+    "@cloudbase/node-sdk": "latest"
+  }
+}

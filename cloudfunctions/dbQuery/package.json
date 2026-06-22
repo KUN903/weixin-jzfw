@@ -1,0 +1,8 @@
+{
+  "name": "dbQuery",
+  "version": "1.0.0",
+  "description": "数据库查询云函数",
+  "dependencies": {
+    "@cloudbase/node-sdk": "latest"
+  }
+}

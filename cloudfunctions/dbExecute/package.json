@@ -1,0 +1,8 @@
+{
+  "name": "dbExecute",
+  "version": "1.0.0",
+  "description": "数据库执行云函数",
+  "dependencies": {
+    "@cloudbase/node-sdk": "latest"
+  }
+}

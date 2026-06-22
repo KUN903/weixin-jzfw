@@ -1,0 +1,255 @@
+<!-- pages/mine/mine.wxml - 个人中心（含角色切换） -->
+<view class="page-mine">
+  <!-- 用户头部 -->
+  <view class="user-header">
+    <view class="user-avatar" bindtap="onLogin">
+      <text wx:if="{{!isLogin}}">👤</text>
+      <image wx:else src="{{userInfo.avatar}}" mode="aspectFill"></image>
+    </view>
+    <view class="user-info" bindtap="onLogin">
+      <text class="user-name" wx:if="{{isLogin}}">{{userInfo.nickname || '微信用户'}}</text>
+      <text class="user-name" wx:else>点击登录</text>
+      <text class="user-sub" wx:if="{{isLogin}}">{{roleAlias}}</text>
+      <text class="user-sub" wx:else>登录享受更多优惠</text>
+    </view>
+    <view class="role-tag" bindtap="onToggleRolePicker">
+      <text>{{roles[0].icon}}</text>
+      <text class="role-tag-text">{{roleAlias}}</text>
+      <text class="role-tag-arrow">▼</text>
+    </view>
+  </view>
+
+  <!-- 角色选择器 -->
+  <view class="role-picker" wx:if="{{showRolePicker}}">
+    <view class="role-picker-item {{role === item.key ? 'active' : ''}}" 
+          wx:for="{{roles}}" wx:key="key" data-role="{{item.key}}" bindtap="onSwitchRole">
+      <text class="role-picker-icon">{{item.icon}}</text>
+      <view class="role-picker-info">
+        <text class="role-picker-name">{{item.name}}</text>
+        <text class="role-picker-desc" wx:if="{{item.key === 'user'}}">查看我的订单与资产</text>
+        <text class="role-picker-desc" wx:elif="{{item.key === 'worker'}}">查看分配给我的工单</text>
+        <text class="role-picker-desc" wx:elif="{{item.key === 'admin'}}">查看全平台运营数据</text>
+      </view>
+      <text class="role-picker-check" wx:if="{{role === item.key}}">✅</text>
+    </view>
+  </view>
+
+  <!-- ========== 用户端：数据统计 ========== -->
+  <view class="stats-row" wx:if="{{role === 'user'}}">
+    <view class="stat-item" bindtap="onGoOrderList" data-tab="0">
+      <text class="stat-number">{{stats.totalOrders || 0}}</text>
+      <text class="stat-label">全部订单</text>
+    </view>
+    <view class="stat-item" bindtap="onGoOrderList" data-tab="1">
+      <text class="stat-number">{{stats.pending || 0}}</text>
+      <text class="stat-label">待接单</text>
+    </view>
+    <view class="stat-item" bindtap="onGoOrderList" data-tab="3">
+      <text class="stat-number">{{stats.serving || 0}}</text>
+      <text class="stat-label">服务中</text>
+    </view>
+    <view class="stat-item" bindtap="onGoOrderList" data-tab="4">
+      <text class="stat-number">{{stats.waitReview || 0}}</text>
+      <text class="stat-label">待评价</text>
+    </view>
+  </view>
+
+  <!-- ========== 师傅端：数据统计 ========== -->
+  <view class="stats-row" wx:if="{{role === 'worker'}}">
+    <view class="stat-item" bindtap="onViewWorkerOrders">
+      <text class="stat-number">{{workerStats.todayOrders || 0}}</text>
+      <text class="stat-label">今日工单</text>
+    </view>
+    <view class="stat-item" bindtap="onViewWorkerOrders">
+      <text class="stat-number">{{workerStats.pendingOrders || 0}}</text>
+      <text class="stat-label">待开始</text>
+    </view>
+    <view class="stat-item" bindtap="onViewWorkerOrders">
+      <text class="stat-number">{{workerStats.servingOrders || 0}}</text>
+      <text class="stat-label">服务中</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{workerStats.completedToday || 0}}</text>
+      <text class="stat-label">已完成</text>
+    </view>
+  </view>
+
+  <!-- ========== 管理员端：数据统计 ========== -->
+  <view class="stats-row" wx:if="{{role === 'admin'}}">
+    <view class="stat-item" bindtap="onViewAdminOrders">
+      <text class="stat-number">{{adminStats.todayOrders || 0}}</text>
+      <text class="stat-label">今日新增</text>
+    </view>
+    <view class="stat-item" bindtap="onViewAdminOrders">
+      <text class="stat-number">{{adminStats.pendingOrders || 0}}</text>
+      <text class="stat-label">待接单</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{adminStats.totalWorkers || 0}}</text>
+      <text class="stat-label">在线师傅</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{adminStats.totalUsers || 0}}</text>
+      <text class="stat-label">用户数</text>
+    </view>
+  </view>
+
+  <!-- ========== 用户端：资产卡片 ========== -->
+  <view class="card asset-card" wx:if="{{role === 'user'}}">
+    <view class="asset-item">
+      <text class="asset-value">{{userInfo.balance || '0.00'}}</text>
+      <text class="asset-label">余额</text>
+    </view>
+    <view class="asset-divider"></view>
+    <view class="asset-item">
+      <text class="asset-value">{{totalCoupons || 0}}</text>
+      <text class="asset-label">优惠券</text>
+    </view>
+    <view class="asset-divider"></view>
+    <view class="asset-item">
+      <text class="asset-value">{{userInfo.points || 0}}</text>
+      <text class="asset-label">积分</text>
+    </view>
+  </view>
+
+  <!-- ========== 师傅端：收入卡片 ========== -->
+  <view class="card asset-card" wx:if="{{role === 'worker'}}">
+    <view class="asset-item">
+      <text class="asset-value">¥{{workerStats.totalEarnings || '0'}}</text>
+      <text class="asset-label">累计收入</text>
+    </view>
+    <view class="asset-divider"></view>
+    <view class="asset-item" bindtap="onViewWorkerOrders">
+      <text class="asset-value">{{workerStats.todayOrders || 0}}</text>
+      <text class="asset-label">今日接单</text>
+    </view>
+    <view class="asset-divider"></view>
+    <view class="asset-item">
+      <text class="asset-value">{{workerStats.completedToday || 0}}</text>
+      <text class="asset-label">今日完成</text>
+    </view>
+  </view>
+
+  <!-- ========== 管理员端：营收卡片 ========== -->
+  <view class="card asset-card" wx:if="{{role === 'admin'}}">
+    <view class="asset-item">
+      <text class="asset-value">¥{{adminStats.totalRevenue || '0'}}</text>
+      <text class="asset-label">平台营收</text>
+    </view>
+    <view class="asset-divider"></view>
+    <view class="asset-item" bindtap="onViewAdminOrders">
+      <text class="asset-value">{{adminStats.todayOrders || 0}}</text>
+      <text class="asset-label">今日订单</text>
+    </view>
+    <view class="asset-divider"></view>
+    <view class="asset-item">
+      <text class="asset-value">{{adminStats.totalWorkers || 0}}</text>
+      <text class="asset-label">师傅在岗</text>
+    </view>
+  </view>
+
+  <!-- ========== 用户端：常用功能 ========== -->
+  <view class="menu-section" wx:if="{{role === 'user'}}">
+    <text class="menu-title">常用功能</text>
+    <view class="menu-list">
+      <view class="menu-item" bindtap="onNavigate" data-url="/pages/address-list/address-list">
+        <text class="menu-icon">📍</text>
+        <text class="menu-label">地址管理</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="onNavigate" data-url="/pages/coupons/coupons">
+        <text class="menu-icon">🎫</text>
+        <text class="menu-label">我的优惠券</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="onNavigate" data-url="/pages/favorites/favorites">
+        <text class="menu-icon">❤️</text>
+        <text class="menu-label">我的收藏</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="onGoOrderList" data-tab="0">
+        <text class="menu-icon">📋</text>
+        <text class="menu-label">全部订单</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 师傅端：功能菜单 ========== -->
+  <view class="menu-section" wx:if="{{role === 'worker'}}">
+    <text class="menu-title">服务功能</text>
+    <view class="menu-list">
+      <view class="menu-item" bindtap="onViewWorkerOrders">
+        <text class="menu-icon">📋</text>
+        <text class="menu-label">今日工单</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="onGoOrderList" data-tab="0">
+        <text class="menu-icon">📊</text>
+        <text class="menu-label">全部工单</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item">
+        <text class="menu-icon">💰</text>
+        <text class="menu-label">收入明细</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item">
+        <text class="menu-icon">⏰</text>
+        <text class="menu-label">出勤设置</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 管理员端：管理菜单 ========== -->
+  <view class="menu-section" wx:if="{{role === 'admin'}}">
+    <text class="menu-title">管理功能</text>
+    <view class="menu-list">
+      <view class="menu-item" bindtap="onViewAdminOrders">
+        <text class="menu-icon">📋</text>
+        <text class="menu-label">全部订单</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item">
+        <text class="menu-icon">👨‍🔧</text>
+        <text class="menu-label">师傅管理</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item">
+        <text class="menu-icon">👥</text>
+        <text class="menu-label">用户管理</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item">
+        <text class="menu-icon">📈</text>
+        <text class="menu-label">运营报表</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 公共：更多服务 ========== -->
+  <view class="menu-section">
+    <text class="menu-title">更多服务</text>
+    <view class="menu-list">
+      <view class="menu-item" bindtap="onContactService">
+        <text class="menu-icon">💬</text>
+        <text class="menu-label">联系客服</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item">
+        <text class="menu-icon">📖</text>
+        <text class="menu-label">使用帮助</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item">
+        <text class="menu-icon">⚙️</text>
+        <text class="menu-label">设置</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="safe-bottom" style="height: 40rpx;"></view>
+</view>

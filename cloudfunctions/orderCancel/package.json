@@ -1,0 +1,8 @@
+{
+  "name": "orderCancel",
+  "version": "1.0.0",
+  "description": "订单取消云函数",
+  "dependencies": {
+    "@cloudbase/node-sdk": "latest"
+  }
+}

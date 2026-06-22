@@ -1,0 +1,122 @@
+<!-- pages/order-create/order-create.wxml - 预约下单 -->
+<view class="page-order-create">
+
+  <!-- 步骤1：填写信息 -->
+  <view wx:if="{{step === 1}}">
+    <!-- 服务信息 -->
+    <view class="card order-card">
+      <view class="flex-between">
+        <text class="order-service-name">{{service.name || '家政服务'}}</text>
+        <text class="price-value-small">¥{{price}}</text>
+      </view>
+      <text class="order-spec">{{specText}}</text>
+    </view>
+
+    <!-- 选择地址 -->
+    <view class="card">
+      <text class="card-title">上门地址</text>
+      <view wx:if="{{!selectedAddress}}" class="empty-addr">
+        <text>请选择上门地址</text>
+      </view>
+      <view wx:else class="selected-addr" bindtap="onSelectAddress" data-id="{{selectedAddress.id}}">
+        <view class="flex-center">
+          <text class="addr-icon">📍</text>
+          <view>
+            <text class="addr-contact">{{selectedAddress.contact_name}} {{selectedAddress.contact_phone}}</text>
+            <text class="addr-detail">{{selectedAddress.detail}}</text>
+          </view>
+        </view>
+      </view>
+      <!-- 地址列表 -->
+      <view class="addr-list" wx:if="{{addresses.length > 0}}">
+        <view class="addr-item {{selectedAddress && selectedAddress.id === item.id ? 'active' : ''}}" 
+              wx:for="{{addresses}}" wx:key="id" data-id="{{item.id}}" bindtap="onSelectAddress">
+          <view class="flex-between">
+            <view class="flex-1">
+              <text class="addr-contact">{{item.contact_name}} {{item.contact_phone}}</text>
+              <text class="addr-detail">{{item.detail}}</text>
+            </view>
+            <text wx:if="{{selectedAddress && selectedAddress.id === item.id}}" class="addr-check">✅</text>
+          </view>
+        </view>
+      </view>
+      <view class="add-btn" bindtap="onAddAddress">+ 新增地址</view>
+    </view>
+
+    <!-- 选择日期 -->
+    <view class="card">
+      <text class="card-title">服务日期</text>
+      <scroll-view class="date-scroll" scroll-x>
+        <view class="date-item {{serviceDate === item.value ? 'active' : ''}}" 
+              wx:for="{{next7Days}}" wx:key="value" data-date="{{item.value}}" bindtap="onSelectDate">
+          <text>{{item.label}}</text>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 选择时段 -->
+    <view class="card" wx:if="{{serviceDate}}">
+      <text class="card-title">服务时段</text>
+      <view class="time-grid">
+        <view class="time-item {{serviceTimeSlot === item ? 'active' : ''}}" 
+              wx:for="{{timeSlots}}" wx:key="*this" data-slot="{{item}}" bindtap="onSelectTime">
+          <text>{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 备注 -->
+    <view class="card">
+      <text class="card-title">备注</text>
+      <textarea class="remark-input" placeholder="如有特殊要求请备注，选填" maxlength="200" bindinput="onRemarkInput" />
+    </view>
+  </view>
+
+  <!-- 步骤2：确认支付 -->
+  <view wx:if="{{step === 2}}">
+    <view class="card order-card">
+      <text class="order-service-name">{{service.name || '家政服务'}}</text>
+      <text class="order-spec">{{specText}}</text>
+      <view class="divider"></view>
+      <view class="flex-between">
+        <text class="label-text">服务日期</text>
+        <text>{{serviceDate}} {{serviceTimeSlot}}</text>
+      </view>
+      <view class="flex-between" style="margin-top: 12rpx;">
+        <text class="label-text">上门地址</text>
+        <text>{{selectedAddress.detail}}</text>
+      </view>
+    </view>
+
+    <view class="card price-card">
+      <text class="card-title">费用明细</text>
+      <view class="price-row">
+        <text>服务费用</text>
+        <text>¥{{price}}</text>
+      </view>
+      <view class="price-row" wx:if="{{couponDiscount > 0}}">
+        <text>优惠券</text>
+        <text class="discount-text">-¥{{couponDiscount}}</text>
+      </view>
+      <view class="divider"></view>
+      <view class="price-row total-row">
+        <text>实付金额</text>
+        <text class="price-value">¥{{actualPrice}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="bottom-bar">
+    <view class="btn-primary bottom-btn" wx:if="{{step === 1}}" bindtap="onSubmitOrder">
+      下一步
+    </view>
+    <view wx:if="{{step === 2}}" class="flex" style="gap: 20rpx;">
+      <view class="btn-outline bottom-btn flex-1" bindtap="onPrevStep">上一步</view>
+      <view class="btn-primary bottom-btn flex-1" bindtap="onSubmitOrder">
+        {{submitting ? '提交中...' : '提交订单 ¥' + actualPrice}}
+      </view>
+    </view>
+  </view>
+
+</view>

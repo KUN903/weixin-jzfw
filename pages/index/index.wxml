@@ -1,0 +1,143 @@
+<!-- pages/index/index.wxml - 首页（美化版） -->
+<view class="page-index">
+
+  <!-- 顶部搜索栏 -->
+  <view class="header-bar">
+    <view class="city-switch" bindtap="onSwitchCity">
+      <text class="city-icon">{{locating ? '📍' : '📍'}}</text>
+      <text class="city-name">{{city}}</text>
+      <text class="city-district" wx:if="{{district}}">· {{district}}</text>
+      <text class="arrow-down">{{locating ? '⏳' : '▼'}}</text>
+    </view>
+    <view class="search-box" bindtap="onTapSearch">
+      <text class="search-icon">🔍</text>
+      <text class="search-placeholder">搜索家政服务</text>
+    </view>
+  </view>
+
+  <!-- 轮播图 -->
+  <swiper class="banner-swiper" indicator-dots="{{true}}" autoplay="{{true}}" circular="{{true}}" interval="{{4000}}" duration="{{500}}" indicator-color="rgba(255,255,255,0.3)" indicator-active-color="#fff">
+    <swiper-item wx:for="{{banners}}" wx:key="id">
+      <view class="banner-item banner-bg-{{index+1}}">
+        <view class="banner-decor left"></view>
+        <view class="banner-decor right"></view>
+        <view class="banner-content">
+          <text class="banner-title">{{item.title}}</text>
+          <text class="banner-sub">立即查看 ►</text>
+        </view>
+      </view>
+    </swiper-item>
+  </swiper>
+
+  <!-- 快捷操作入口 -->
+  <view class="quick-actions">
+    <view class="quick-item" bindtap="onTapSearch">
+      <text class="quick-icon">🔍</text>
+      <text class="quick-label">搜索</text>
+    </view>
+    <view class="quick-item" bindtap="onMoreWorkers">
+      <text class="quick-icon">👨‍🔧</text>
+      <text class="quick-label">找师傅</text>
+    </view>
+    <view class="quick-item" data-tab="0" bindtap="onGoOrders">
+      <text class="quick-icon">📋</text>
+      <text class="quick-label">我的订单</text>
+    </view>
+    <view class="quick-item">
+      <text class="quick-icon">💬</text>
+      <text class="quick-label">客服</text>
+    </view>
+  </view>
+
+  <!-- 服务分类 -->
+  <view class="category-section">
+    <view class="section-title-row">
+      <view>
+        <text class="section-title">全部分类</text>
+        <text class="section-sub">7大品类</text>
+      </view>
+      <text class="section-more" bindtap="onMoreWorkers">查看全部 ›</text>
+    </view>
+    <view class="category-grid">
+      <view class="category-item" wx:for="{{categories}}" wx:key="id" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="onTapCategory">
+        <view class="cat-icon-wrap c{{index+1}}">
+          <text class="cat-icon">{{item.icon || '📋'}}</text>
+        </view>
+        <text class="cat-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 热门推荐 -->
+  <view class="section">
+    <view class="section-header">
+      <view>
+        <text class="section-title">热门推荐</text>
+        <text class="section-sub">口碑好服务</text>
+      </view>
+      <text class="section-more" bindtap="onMoreWorkers">更多 ›</text>
+    </view>
+    <scroll-view class="service-scroll" scroll-x show-scrollbar="{{false}}">
+      <view class="service-card" wx:for="{{hotServices}}" wx:key="id" wx:for-item="service" data-id="{{service.id}}" bindtap="onTapService">
+        <view class="service-cover cover-gradient-{{index%4+1}}">
+          <text class="cover-tag" wx:if="{{service.sales > 1000}}">热卖</text>
+          <image wx:if="{{service.cover_image}}" class="service-cover-image" src="{{service.cover_image}}" mode="aspectFill"></image>
+          <text class="service-cover-placeholder" wx:else>{{service.cp2}}</text>
+        </view>
+        <view class="service-info">
+          <text class="service-name">{{service.name}}</text>
+          <view class="service-price-row">
+            <text class="price-symbol">¥</text>
+            <text class="price-value">{{service.price}}</text>
+            <text class="price-unit">/{{service.unit}}</text>
+            <text class="price-original" wx:if="{{service.original_price && service.original_price > service.price}}">¥{{service.original_price}}</text>
+          </view>
+          <view class="service-meta">
+            <text class="meta-item">已售{{service.sales}}</text>
+            <text class="meta-item" wx:if="{{service.rating}}">⭐{{service.rating}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 附近师傅 -->
+  <view class="section">
+    <view class="section-header">
+      <view>
+        <text class="section-title">附近师傅</text>
+        <text class="section-sub">在岗可预约</text>
+      </view>
+    </view>
+    <view class="worker-list">
+      <view class="worker-card" wx:for="{{nearWorkers}}" wx:key="id" data-id="{{item.id}}" bindtap="onTapWorker">
+        <view class="worker-avatar">
+          <text class="worker-avatar-placeholder">👨‍🔧</text>
+          <view class="worker-online-dot"></view>
+        </view>
+        <view class="worker-info">
+          <view class="worker-name-row">
+            <text class="worker-name">{{item.name}}</text>
+            <text class="worker-distance">{{item.distanceText || '附近'}}</text>
+          </view>
+          <text class="worker-intro">{{item.intro || '专业家政服务人员'}}</text>
+          <view class="worker-stats">
+            <view class="stat-item">
+              <text class="stat-star">⭐</text>
+              <text>{{item.ratingText || '5.0'}}</text>
+            </view>
+            <text class="stat-divider">|</text>
+            <text class="stat-item">已接{{item.total_orders || 0}}单</text>
+            <text class="stat-divider">|</text>
+            <text class="stat-item">好评率{{item.good_rate || 100}}%</text>
+          </view>
+        </view>
+        <view class="worker-btn">
+          <text class="book-btn">预约</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="safe-bottom" style="height: 30rpx;"></view>
+</view>

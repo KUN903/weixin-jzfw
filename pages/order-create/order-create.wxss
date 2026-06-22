@@ -1,0 +1,57 @@
+/* pages/order-create/order-create.wxss */
+.page-order-create { background: #f5f5f5; min-height: 100vh; padding-bottom: 140rpx; }
+
+/* 服务信息 */
+.order-card { margin-top: 20rpx; }
+.order-service-name { font-size: 30rpx; font-weight: bold; color: #333; }
+.price-value-small { font-size: 32rpx; color: #FA5151; font-weight: bold; }
+.order-spec { font-size: 24rpx; color: #999; margin-top: 8rpx; }
+
+/* 卡片标题 */
+.card-title { font-size: 30rpx; font-weight: bold; color: #333; margin-bottom: 16rpx; }
+
+/* 地址 */
+.empty-addr { padding: 20rpx 0; color: #999; }
+.addr-icon { font-size: 36rpx; margin-right: 12rpx; }
+.addr-contact { font-size: 28rpx; color: #333; font-weight: 500; }
+.addr-detail { font-size: 24rpx; color: #999; display: block; margin-top: 4rpx; }
+.addr-item { padding: 16rpx 0; border-bottom: 1rpx solid #f5f5f5; }
+.addr-item.active { background: rgba(7,193,96,0.03); }
+.addr-check { font-size: 28rpx; }
+.add-btn { color: #07C160; font-size: 28rpx; padding: 16rpx 0; text-align: center; }
+
+/* 日期 */
+.date-scroll { white-space: nowrap; padding: 8rpx 0; }
+.date-item {
+  display: inline-block; padding: 14rpx 24rpx; margin-right: 16rpx;
+  background: #f5f5f5; border-radius: 10rpx; font-size: 26rpx; color: #333;
+  border: 2rpx solid transparent;
+}
+.date-item.active { background: rgba(7,193,96,0.08); color: #07C160; border-color: #07C160; }
+
+/* 时段 */
+.time-grid { display: flex; flex-wrap: wrap; }
+.time-item {
+  margin: 0 16rpx 16rpx 0; padding: 16rpx 32rpx; background: #f5f5f5;
+  border-radius: 10rpx; font-size: 26rpx; color: #333;
+  border: 2rpx solid transparent;
+}
+.time-item.active { background: rgba(7,193,96,0.08); color: #07C160; border-color: #07C160; }
+
+/* 备注 */
+.remark-input { width: 100%; min-height: 120rpx; font-size: 28rpx; color: #333; padding: 16rpx 0; }
+
+/* 费用明细 */
+.price-card { margin-top: 20rpx; }
+.price-row { display: flex; justify-content: space-between; padding: 10rpx 0; font-size: 28rpx; color: #666; }
+.total-row { font-weight: bold; color: #333; }
+.discount-text { color: #07C160; }
+.label-text { color: #666; font-size: 26rpx; }
+
+/* 底部按钮 */
+.bottom-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  padding: 20rpx 24rpx; background: #fff; border-top: 1rpx solid #eee;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+}
+.bottom-btn { padding: 24rpx; border-radius: 16rpx; text-align: center; font-size: 30rpx; width: 100%; }

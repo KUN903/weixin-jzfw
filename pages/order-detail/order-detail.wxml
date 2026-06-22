@@ -1,0 +1,168 @@
+<!-- pages/order-detail/order-detail.wxml - 订单详情 -->
+<view class="page-detail" wx:if="{{order.order_no}}">
+  <!-- 状态卡片 -->
+  <view class="status-card {{order.status === 'cancelled' ? 'cancelled' : ''}}">
+    <view class="status-header">
+      <text class="status-icon">{{order.status === 'cancelled' ? '✕' : order.status === 'finished' ? '✓' : order.status === 'completed' ? '⭐' : '⏳'}}</text>
+      <text class="status-text">{{statusText}}</text>
+    </view>
+    <view class="status-steps">
+      <view class="step-item {{item.done ? 'done' : ''}} {{index === currentStep ? 'current' : ''}}"
+            wx:for="{{statusSteps}}" wx:key="index">
+        <view class="step-dot">{{item.done ? '✓' : item.isEnd ? '✕' : index + 1}}</view>
+        <text class="step-label">{{item.label}}</text>
+        <view class="step-line" wx:if="{{index < statusSteps.length - 1}}"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作提醒卡片 -->
+  <view class="action-alert" wx:if="{{canPay}}">
+    <view class="alert-content">
+      <text class="alert-icon">💡</text>
+      <view class="alert-text">
+        <text class="alert-title">待支付</text>
+        <text class="alert-desc">请尽快完成支付，超时订单将自动取消</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 服务信息 -->
+  <view class="card">
+    <view class="flex-between">
+      <text class="service-name">{{order.service_name}}</text>
+      <text class="price-text">¥{{order.actual_price}}</text>
+    </view>
+    <view class="flex-between" style="margin-top: 12rpx;">
+      <text class="label-text">订单编号</text>
+      <view class="flex-center" bindtap="onCopyOrderNo">
+        <text>{{order.order_no}}</text>
+        <text class="copy-btn">复制</text>
+      </view>
+    </view>
+    <view class="flex-between" style="margin-top: 8rpx;" wx:if="{{order.pay_status === 0}}">
+      <text class="label-text">支付状态</text>
+      <text class="tag-unpaid">未支付</text>
+    </view>
+    <view class="flex-between" style="margin-top: 8rpx;" wx:if="{{order.pay_status === 1}}">
+      <text class="label-text">支付状态</text>
+      <text class="tag-paid">已支付</text>
+    </view>
+  </view>
+
+  <!-- 预约信息 -->
+  <view class="card">
+    <text class="card-title">预约信息</text>
+    <view class="info-row">
+      <text class="info-label">服务日期</text>
+      <text>{{order.service_date}} {{order.service_time_slot}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">上门地址</text>
+      <text>{{order.address_detail}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">联系人</text>
+      <text>{{order.contact_name}} {{order.contact_phone}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.remark}}">
+      <text class="info-label">备注</text>
+      <text>{{order.remark}}</text>
+    </view>
+  </view>
+
+  <!-- 师傅信息 -->
+  <view class="card" wx:if="{{order.worker_name}}">
+    <text class="card-title">服务师傅</text>
+    <view class="flex-center">
+      <view class="worker-avatar">
+        <text>👨‍🔧</text>
+      </view>
+      <view class="flex-1" style="margin-left: 16rpx;">
+        <text class="worker-name">{{order.worker_name}}</text>
+        <text class="worker-phone">{{order.worker_phone}}</text>
+      </view>
+      <view class="btn-outline call-btn" bindtap="onCallWorker">📞 联系</view>
+    </view>
+  </view>
+
+  <!-- 费用明细 -->
+  <view class="card">
+    <text class="card-title">费用明细</text>
+    <view class="info-row">
+      <text>订单金额</text>
+      <text>¥{{order.price}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.discount > 0}}">
+      <text>优惠</text>
+      <text class="discount-text">-¥{{order.discount}}</text>
+    </view>
+    <view class="info-row total">
+      <text>实付金额</text>
+      <text class="price-value">¥{{order.actual_price}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.paid_at}}">
+      <text>支付时间</text>
+      <text>{{order.paid_at}}</text>
+    </view>
+  </view>
+
+  <!-- 订单日志 -->
+  <view class="card" wx:if="{{orderLogs.length > 0}}">
+    <text class="card-title">订单记录</text>
+    <view class="log-item" wx:for="{{orderLogs}}" wx:key="index">
+      <view class="log-dot {{item.operator_type}}"></view>
+      <view class="log-content">
+        <text class="log-text">{{item.content}}</text>
+        <text class="log-time">{{item.created_at}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar" wx:if="{{order.status !== 'finished' && order.status !== 'cancelled' && order.status !== 'refunded'}}">
+    <!-- 待接单：取消 + 支付 -->
+    <view wx:if="{{canCancel}}" class="flex" style="gap:16rpx;width:100%">
+      <view class="btn-outline flex-1" bindtap="onCancelOrder">取消订单</view>
+      <view class="btn-primary flex-1" bindtap="onPayOrder">去支付 ¥{{order.actual_price}}</view>
+    </view>
+
+    <!-- 已接单但未支付：支付 + 联系客服 -->
+    <view wx:elif="{{order.status === 'accepted' && order.pay_status === 0}}" class="flex" style="gap:16rpx;width:100%">
+      <view class="btn-outline flex-1" bindtap="onContactService">联系客服</view>
+      <view class="btn-primary flex-1" bindtap="onPayOrder">去支付 ¥{{order.actual_price}}</view>
+    </view>
+
+    <!-- 已接单已支付：等待服务开始 -->
+    <view wx:elif="{{order.status === 'accepted' && order.pay_status === 1}}" class="flex" style="gap:16rpx;width:100%">
+      <view class="btn-outline flex-1" bindtap="onContactService">联系客服</view>
+      <view class="btn-primary flex-1" bindtap="onStartService">开始服务</view>
+    </view>
+
+    <!-- 服务中：确认完成 + 联系师傅 -->
+    <view wx:elif="{{canConfirmComplete}}" class="flex" style="gap:16rpx;width:100%">
+      <view class="btn-outline flex-1" bindtap="onCallWorker">联系师傅</view>
+      <view class="btn-primary flex-1" bindtap="onConfirmComplete">确认完成</view>
+    </view>
+
+    <!-- 待评价 -->
+    <view wx:elif="{{canReview}}" class="flex" style="gap:16rpx;width:100%">
+      <view class="btn-outline flex-1" bindtap="onContactService">联系客服</view>
+      <view class="btn-primary flex-1" bindtap="onGoReview">去评价 ⭐</view>
+    </view>
+
+    <!-- 其他状态 -->
+    <view wx:else class="btn-outline" style="width:100%;text-align:center" bindtap="onContactService">联系客服</view>
+  </view>
+
+  <!-- 已完成/已取消：只有联系客服 -->
+  <view class="bottom-bar" wx:else>
+    <view class="btn-outline" style="width:100%;text-align:center" bindtap="onContactService">联系客服</view>
+  </view>
+</view>
+
+<view wx:else class="empty-page">
+  <view class="empty-icon">📋</view>
+  <text class="empty-text">订单不存在或加载中...</text>
+  <view class="btn-outline" style="margin-top:32rpx;display:inline-block;padding:16rpx 48rpx;" bindtap="onGoBack">返回</view>
+</view>

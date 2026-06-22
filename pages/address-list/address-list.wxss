@@ -1,0 +1,8 @@
+/* address-list */
+.page-addr { min-height: 100vh; background: #f5f5f5; padding: 20rpx; }
+.addr-item { background: #fff; border-radius: 16rpx; padding: 24rpx; margin-bottom: 16rpx; }
+.addr-name { font-size: 30rpx; font-weight: bold; color: #333; }
+.addr-phone { font-size: 26rpx; color: #666; font-weight: normal; margin-left: 16rpx; }
+.addr-tag { font-size: 22rpx; color: #07C160; background: rgba(7,193,96,0.1); padding: 4rpx 16rpx; border-radius: 6rpx; }
+.addr-detail { font-size: 26rpx; color: #666; margin-top: 10rpx; display: block; }
+.add-btn { text-align: center; padding: 28rpx; color: #07C160; font-size: 30rpx; font-weight: bold; background: #fff; border-radius: 16rpx; }

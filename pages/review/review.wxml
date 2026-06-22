@@ -1,0 +1,7 @@
+<!-- pages/review/review.wxml -->
+<view class="page-review">
+  <view class="card"><text class="card-title">评分</text><view class="star-row"><text class="star {{index < rating ? 'active' : ''}}" wx:for="{{5}}" wx:key="*this" data-index="{{index+1}}" bindtap="onRate">★</text></view></view>
+  <view class="card"><text class="card-title">评价内容</text><textarea class="review-input" placeholder="分享您的服务体验，帮助其他用户参考" maxlength="500" bindinput="onInput" /></view>
+  <view class="card"><view class="flex-between"><text class="card-title">匿名评价</text><switch checked="{{isAnonymous}}" bindchange="onSwitchAnon" color="#07C160" /></view></view>
+  <view class="btn-primary submit-btn" bindtap="onSubmit">提交评价</view>
+</view>
