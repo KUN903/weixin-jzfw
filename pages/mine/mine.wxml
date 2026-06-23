@@ -9,28 +9,8 @@
     <view class="user-info" bindtap="onLogin">
       <text class="user-name" wx:if="{{isLogin}}">{{userInfo.nickname || '微信用户'}}</text>
       <text class="user-name" wx:else>点击登录</text>
-      <text class="user-sub" wx:if="{{isLogin}}">{{roleAlias}}</text>
+      <text class="user-sub" wx:if="{{isLogin}}">{{role === 'worker' ? '服务师傅' : '普通用户'}}</text>
       <text class="user-sub" wx:else>登录享受更多优惠</text>
-    </view>
-    <view class="role-tag" bindtap="onToggleRolePicker">
-      <text>{{roles[0].icon}}</text>
-      <text class="role-tag-text">{{roleAlias}}</text>
-      <text class="role-tag-arrow">▼</text>
-    </view>
-  </view>
-
-  <!-- 角色选择器 -->
-  <view class="role-picker" wx:if="{{showRolePicker}}">
-    <view class="role-picker-item {{role === item.key ? 'active' : ''}}" 
-          wx:for="{{roles}}" wx:key="key" data-role="{{item.key}}" bindtap="onSwitchRole">
-      <text class="role-picker-icon">{{item.icon}}</text>
-      <view class="role-picker-info">
-        <text class="role-picker-name">{{item.name}}</text>
-        <text class="role-picker-desc" wx:if="{{item.key === 'user'}}">查看我的订单与资产</text>
-        <text class="role-picker-desc" wx:elif="{{item.key === 'worker'}}">查看分配给我的工单</text>
-        <text class="role-picker-desc" wx:elif="{{item.key === 'admin'}}">查看全平台运营数据</text>
-      </view>
-      <text class="role-picker-check" wx:if="{{role === item.key}}">✅</text>
     </view>
   </view>
 
@@ -179,22 +159,22 @@
   <view class="menu-section" wx:if="{{role === 'worker'}}">
     <text class="menu-title">服务功能</text>
     <view class="menu-list">
-      <view class="menu-item" bindtap="onViewWorkerOrders">
+      <view class="menu-item" bindtap="onNavigate" data-url="/pages/today-orders/today-orders">
         <text class="menu-icon">📋</text>
         <text class="menu-label">今日工单</text>
         <text class="menu-arrow">›</text>
       </view>
-      <view class="menu-item" bindtap="onGoOrderList" data-tab="0">
+      <view class="menu-item" bindtap="onNavigate" data-url="/pages/all-orders/all-orders">
         <text class="menu-icon">📊</text>
         <text class="menu-label">全部工单</text>
         <text class="menu-arrow">›</text>
       </view>
-      <view class="menu-item">
+      <view class="menu-item" bindtap="onNavigate" data-url="/pages/income/income">
         <text class="menu-icon">💰</text>
         <text class="menu-label">收入明细</text>
         <text class="menu-arrow">›</text>
       </view>
-      <view class="menu-item">
+      <view class="menu-item" bindtap="onNavigate" data-url="/pages/attendance/attendance">
         <text class="menu-icon">⏰</text>
         <text class="menu-label">出勤设置</text>
         <text class="menu-arrow">›</text>
@@ -238,12 +218,12 @@
         <text class="menu-label">联系客服</text>
         <text class="menu-arrow">›</text>
       </view>
-      <view class="menu-item">
+      <view class="menu-item" bindtap="onNavigate" data-url="/pages/help/help">
         <text class="menu-icon">📖</text>
         <text class="menu-label">使用帮助</text>
         <text class="menu-arrow">›</text>
       </view>
-      <view class="menu-item">
+      <view class="menu-item" bindtap="onNavigate" data-url="/pages/settings/settings">
         <text class="menu-icon">⚙️</text>
         <text class="menu-label">设置</text>
         <text class="menu-arrow">›</text>

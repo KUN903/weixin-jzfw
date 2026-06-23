@@ -1,0 +1,203 @@
+/* pages/help/help.wxss */
+.help-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+
+/* 搜索栏 */
+.search-bar {
+  padding: 20rpx 20rpx 0;
+  background-color: #ffffff;
+}
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: #f5f5f5;
+  border-radius: 40rpx;
+  padding: 14rpx 24rpx;
+}
+.search-icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+}
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+  height: 44rpx;
+}
+.search-placeholder {
+  color: #cccccc;
+}
+
+/* 分类 Tab */
+.category-tabs {
+  background-color: #ffffff;
+  white-space: nowrap;
+  padding: 20rpx 0;
+  display: flex;
+}
+.category-item {
+  display: inline-block;
+  padding: 12rpx 28rpx;
+  font-size: 26rpx;
+  color: #666666;
+  margin: 0 10rpx;
+  border-radius: 30rpx;
+  background-color: #f5f5f5;
+}
+.cat-active {
+  background-color: #07C160;
+  color: #ffffff;
+}
+
+/* 教程区域 */
+.tutorial-section {
+  background-color: #ffffff;
+  margin: 20rpx;
+  border-radius: 16rpx;
+  padding: 30rpx;
+}
+.tutorial-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+.tutorial-icon {
+  font-size: 36rpx;
+  margin-right: 12rpx;
+}
+.tutorial-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+}
+.step-item {
+  display: flex;
+  margin-bottom: 24rpx;
+}
+.step-item:last-child {
+  margin-bottom: 0;
+}
+.step-index {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 22rpx;
+  background-color: #E8F5E9;
+  color: #07C160;
+  font-size: 24rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+  margin-top: 2rpx;
+}
+.step-content {
+  flex: 1;
+}
+.step-title {
+  display: block;
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 500;
+  margin-bottom: 6rpx;
+}
+.step-desc {
+  font-size: 24rpx;
+  color: #999999;
+  line-height: 1.6;
+}
+
+/* FAQ */
+.faq-section {
+  margin: 0 20rpx;
+}
+.faq-item {
+  border-bottom: 1rpx solid #f5f5f5;
+  padding: 28rpx 0;
+}
+.faq-item:last-child {
+  border-bottom: none;
+}
+.faq-question {
+  display: flex;
+  align-items: flex-start;
+}
+.faq-q {
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+  text-align: center;
+  background-color: #FFF3E0;
+  color: #FF9800;
+  font-size: 24rpx;
+  font-weight: 700;
+  border-radius: 8rpx;
+  margin-right: 14rpx;
+  flex-shrink: 0;
+}
+.faq-q-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333333;
+}
+.faq-arrow {
+  color: #cccccc;
+  font-size: 32rpx;
+  transition: transform 0.3s;
+  margin-left: 12rpx;
+}
+.faq-arrow.open {
+  transform: rotate(90deg);
+}
+.faq-answer {
+  display: none;
+  padding: 16rpx 0 0 54rpx;
+}
+.faq-answer.show {
+  display: flex;
+}
+.faq-a {
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+  text-align: center;
+  background-color: #E8F5E9;
+  color: #07C160;
+  font-size: 24rpx;
+  font-weight: 700;
+  border-radius: 8rpx;
+  margin-right: 14rpx;
+  flex-shrink: 0;
+}
+.faq-a-text {
+  flex: 1;
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 1.6;
+}
+.faq-empty {
+  text-align: center;
+  padding: 40rpx;
+  color: #999999;
+  font-size: 26rpx;
+}
+
+/* 联系客服 */
+.contact-section {
+  padding: 30rpx 20rpx;
+}
+.contact-btn {
+  width: 100%;
+  height: 90rpx;
+  background-color: #E3F2FD;
+  color: #1976D2;
+  font-size: 30rpx;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}

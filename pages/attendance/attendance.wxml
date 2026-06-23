@@ -1,0 +1,154 @@
+<!-- pages/attendance/attendance.wxml - 出勤设置 -->
+<view class="attendance-container">
+
+  <!-- 今日打卡状态卡片 -->
+  <view class="card clock-card">
+    <view class="clock-status">
+      <text class="clock-dot {{isClockedIn ? 'dot-green' : 'dot-gray'}}"></text>
+      <text class="clock-status-text">{{isClockedIn ? '今日已打卡' : '今日未打卡'}}</text>
+    </view>
+    <view class="clock-times" wx:if="{{isClockedIn}}">
+      <view class="time-row">
+        <text class="time-label">上班</text>
+        <text class="time-value">{{clockInTime || '--:--'}}</text>
+      </view>
+      <view class="time-row" wx:if="{{clockOutTime}}">
+        <text class="time-label">下班</text>
+        <text class="time-value">{{clockOutTime}}</text>
+      </view>
+    </view>
+    <view wx:if="{{clockLocation}}" class="clock-location">
+      <text>📍 {{clockLocation}}</text>
+    </view>
+    <!-- 打卡按钮 -->
+    <view class="clock-buttons">
+      <button class="clock-btn clock-in-btn {{isClockedIn ? 'btn-disabled' : ''}}" bindtap="onClockIn" disabled="{{isClockedIn}}">
+        {{isClockedIn ? '已打卡' : '上班打卡'}}
+      </button>
+      <button class="clock-btn clock-out-btn {{!isClockedIn || clockOutTime ? 'btn-disabled' : ''}}" bindtap="onClockOut" disabled="{{!isClockedIn || clockOutTime !== ''}}">
+        {{clockOutTime ? '已签退' : '下班签退'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 接单设置卡片 -->
+  <view class="section-card">
+    <view class="section-title">接单设置</view>
+
+    <!-- 接单开关 -->
+    <view class="list-item">
+      <text class="list-item-text">接单状态</text>
+      <view class="switch-wrapper">
+        <text class="switch-label">{{acceptOrders ? '接单中' : '已暂停'}}</text>
+        <switch checked="{{acceptOrders}}" bindchange="onAcceptSwitch" color="#07C160"/>
+      </view>
+    </view>
+
+    <!-- 接单时段 -->
+    <view class="divider"></view>
+    <view class="list-item">
+      <text class="list-item-text">接单时段</text>
+    </view>
+    <view class="time-range-picker">
+      <picker mode="time" value="{{startTime}}" bindchange="onStartTimeChange">
+        <view class="time-picker-box">
+          <text class="time-picker-label">开始</text>
+          <text class="time-picker-value">{{startTime}}</text>
+        </view>
+      </picker>
+      <text class="time-range-sep">至</text>
+      <picker mode="time" value="{{endTime}}" bindchange="onEndTimeChange">
+        <view class="time-picker-box">
+          <text class="time-picker-label">结束</text>
+          <text class="time-picker-value">{{endTime}}</text>
+        </view>
+      </picker>
+    </view>
+    <view class="save-time-btn" bindtap="onSaveTimeRange">
+      <text>保存时段</text>
+    </view>
+  </view>
+
+  <!-- 请假申请 -->
+  <view class="section-card">
+    <view class="list-item" bindtap="onToggleLeaveForm">
+      <text class="list-item-text">请假申请</text>
+      <text class="list-item-arrow">{{showLeaveForm ? '收起 ▲' : '展开 ▼'}}</text>
+    </view>
+
+    <view class="leave-form" wx:if="{{showLeaveForm}}">
+      <view class="form-group">
+        <text class="form-group-label">请假日期</text>
+        <picker mode="date" value="{{leaveDate}}" bindchange="onLeaveDateChange">
+          <view class="form-picker {{leaveDate ? '' : 'picker-placeholder'}}">
+            {{leaveDate || '请选择日期'}}
+          </view>
+        </picker>
+      </view>
+      <view class="form-group">
+        <text class="form-group-label">请假原因</text>
+        <textarea 
+          class="form-textarea" 
+          placeholder="请填写请假原因..."
+          placeholder-class="placeholder"
+          maxlength="200"
+          value="{{leaveReason}}"
+          bindinput="onLeaveReasonInput"
+        />
+      </view>
+      <button class="submit-leave-btn" bindtap="onSubmitLeave">提交请假申请</button>
+    </view>
+  </view>
+
+  <!-- 历史记录 -->
+  <view class="section-card">
+    <view class="tab-bar">
+      <view class="tab-item {{activeTab === 'clock' ? 'tab-active' : ''}}" bindtap="onTabChange" data-tab="clock">
+        <text>打卡记录</text>
+      </view>
+      <view class="tab-item {{activeTab === 'leave' ? 'tab-active' : ''}}" bindtap="onTabChange" data-tab="leave">
+        <text>请假记录</text>
+      </view>
+    </view>
+
+    <!-- 打卡记录列表 -->
+    <view wx:if="{{activeTab === 'clock'}}">
+      <view wx:if="{{clockRecords.length > 0}}">
+        <view class="record-item" wx:for="{{clockRecords}}" wx:key="id">
+          <view class="record-left">
+            <text class="record-date">{{item.date}}</text>
+            <text class="record-desc">{{item.type === 'in' ? '上班打卡' : '下班签退'}}</text>
+          </view>
+          <view class="record-right">
+            <text class="record-time">{{item.time}}</text>
+            <text class="record-loc">{{item.location}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="empty-records" wx:else>
+        <text>暂无打卡记录</text>
+      </view>
+    </view>
+
+    <!-- 请假记录列表 -->
+    <view wx:if="{{activeTab === 'leave'}}">
+      <view wx:if="{{leaveRecords.length > 0}}">
+        <view class="record-item" wx:for="{{leaveRecords}}" wx:key="id">
+          <view class="record-left">
+            <text class="record-date">{{item.date}}</text>
+            <text class="record-desc">{{item.reason}}</text>
+          </view>
+          <view class="record-right">
+            <text class="tag {{item.status === 'approved' ? 'tag-done' : item.status === 'rejected' ? 'tag-cancel' : 'tag-pending'}}">
+              {{item.status === 'approved' ? '已通过' : item.status === 'rejected' ? '已拒绝' : '审核中'}}
+            </text>
+          </view>
+        </view>
+      </view>
+      <view class="empty-records" wx:else>
+        <text>暂无请假记录</text>
+      </view>
+    </view>
+  </view>
+
+</view>

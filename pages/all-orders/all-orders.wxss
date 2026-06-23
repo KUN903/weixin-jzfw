@@ -1,0 +1,111 @@
+/* pages/all-orders/all-orders.wxss */
+.all-orders-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+
+/* 日期筛选 */
+.filter-bar {
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  padding: 16rpx 20rpx;
+  gap: 12rpx;
+}
+.date-picker {
+  flex: 1;
+  height: 64rpx;
+  line-height: 64rpx;
+  text-align: center;
+  background-color: #f5f5f5;
+  border-radius: 10rpx;
+  font-size: 26rpx;
+  color: #333333;
+}
+.date-placeholder {
+  color: #cccccc;
+}
+.filter-sep {
+  color: #999999;
+  font-size: 24rpx;
+}
+.filter-btn {
+  padding: 0 28rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  background-color: #07C160;
+  color: #ffffff;
+  font-size: 26rpx;
+  border-radius: 10rpx;
+}
+
+/* 状态 Tab */
+.status-tabs {
+  background-color: #ffffff;
+  white-space: nowrap;
+  display: flex;
+  padding: 16rpx 10rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.status-tab {
+  display: inline-block;
+  padding: 10rpx 24rpx;
+  font-size: 26rpx;
+  color: #666666;
+  border-radius: 30rpx;
+  margin: 0 6rpx;
+}
+.tab-active {
+  background-color: #E8F5E9;
+  color: #07C160;
+  font-weight: 600;
+}
+
+/* 工单列表（复用今日工单样式） */
+.order-card {
+  background-color: #ffffff;
+  margin: 0 20rpx 20rpx;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
+}
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+.order-id {
+  font-size: 24rpx;
+  color: #999999;
+}
+.order-body {
+  margin-bottom: 4rpx;
+}
+.order-row {
+  display: flex;
+  margin-bottom: 12rpx;
+}
+.order-label {
+  width: 140rpx;
+  font-size: 26rpx;
+  color: #999999;
+  flex-shrink: 0;
+}
+.order-value {
+  font-size: 26rpx;
+  color: #333333;
+  flex: 1;
+}
+.income-value {
+  color: #FA5151;
+  font-weight: 600;
+}
+
+.load-more {
+  text-align: center;
+  padding: 30rpx;
+  color: #999999;
+  font-size: 24rpx;
+}

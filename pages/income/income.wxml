@@ -1,0 +1,61 @@
+<!-- pages/income/income.wxml - 收入明细 -->
+<view class="income-container">
+
+  <!-- 收入总览卡片 -->
+  <view class="income-summary">
+    <view class="summary-top">
+      <view class="summary-main">
+        <text class="summary-label">累计收入（元）</text>
+        <text class="summary-value">{{totalIncome}}</text>
+      </view>
+      <view class="summary-sub">
+        <text class="sub-label">可提现余额</text>
+        <text class="sub-value">¥{{balance}}</text>
+      </view>
+    </view>
+    <view class="withdraw-btn-wrapper">
+      <button class="withdraw-btn" disabled="{{balance < 100}}">
+        {{balance >= 100 ? '立即提现' : '满100元可提现'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 月份选择 + Tab -->
+  <view class="filter-row">
+    <picker mode="date" fields="month" value="{{selectedMonth}}" bindchange="onMonthChange">
+      <view class="month-picker">{{selectedMonth}} ▼</view>
+    </picker>
+    <view class="type-tabs">
+      <text class="type-tab {{activeTab === item.key ? 'tab-active' : ''}}" 
+            wx:for="{{tabs}}" wx:key="key" 
+            bindtap="onTabChange" data-key="{{item.key}}">{{item.name}}</text>
+    </view>
+  </view>
+
+  <!-- 流水列表 -->
+  <view wx:if="{{list.length > 0}}" class="income-list">
+    <view class="income-item" wx:for="{{list}}" wx:key="id">
+      <view class="income-left">
+        <view class="income-type-icon {{item.type === 'commission' ? 'icon-commission' : 'icon-withdraw'}}">
+          {{item.type === 'commission' ? '💰' : '💳'}}
+        </view>
+        <view class="income-info">
+          <text class="income-title">{{item.type === 'commission' ? '工单佣金' : '提现'}}</text>
+          <text class="income-desc">{{item.remark || item.order_no || item.time}}</text>
+        </view>
+      </view>
+      <view class="income-right">
+        <text class="income-amount {{item.type === 'commission' ? 'amount-plus' : 'amount-minus'}}">
+          {{item.type === 'commission' ? '+' : '-'}}¥{{item.amount}}
+        </text>
+        <text class="income-time">{{item.create_time}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:else>
+    <text class="empty-icon">💰</text>
+    <text class="empty-text">暂无收入记录</text>
+  </view>
+
+</view>

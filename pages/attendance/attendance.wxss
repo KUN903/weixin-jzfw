@@ -1,0 +1,244 @@
+/* pages/attendance/attendance.wxss */
+.attendance-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+
+/* 打卡状态卡片 */
+.clock-card {
+  text-align: center;
+}
+.clock-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20rpx;
+}
+.clock-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 8rpx;
+  margin-right: 12rpx;
+}
+.dot-green { background-color: #07C160; }
+.dot-gray { background-color: #cccccc; }
+.clock-status-text {
+  font-size: 30rpx;
+  color: #333333;
+  font-weight: 600;
+}
+.clock-times {
+  display: flex;
+  justify-content: center;
+  gap: 60rpx;
+  margin-bottom: 16rpx;
+}
+.time-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.time-label {
+  font-size: 24rpx;
+  color: #999999;
+  margin-bottom: 8rpx;
+}
+.time-value {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #333333;
+}
+.clock-location {
+  font-size: 24rpx;
+  color: #999999;
+  margin-bottom: 24rpx;
+}
+.clock-buttons {
+  display: flex;
+  gap: 20rpx;
+}
+.clock-btn {
+  flex: 1;
+  height: 80rpx;
+  font-size: 28rpx;
+  border-radius: 12rpx;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+.clock-in-btn { background-color: #07C160; }
+.clock-out-btn { background-color: #FF9800; }
+.btn-disabled {
+  background-color: #e0e0e0 !important;
+  color: #999999 !important;
+}
+
+/* 接单设置 */
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+  padding: 24rpx 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.switch-wrapper {
+  display: flex;
+  align-items: center;
+}
+.switch-label {
+  font-size: 26rpx;
+  color: #07C160;
+  margin-right: 12rpx;
+}
+.time-range-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 30rpx;
+  gap: 20rpx;
+}
+.time-picker-box {
+  background-color: #f5f5f5;
+  border-radius: 10rpx;
+  padding: 16rpx 30rpx;
+  text-align: center;
+}
+.time-picker-label {
+  display: block;
+  font-size: 22rpx;
+  color: #999999;
+  margin-bottom: 6rpx;
+}
+.time-picker-value {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+}
+.time-range-sep {
+  color: #999999;
+  font-size: 28rpx;
+}
+.save-time-btn {
+  text-align: center;
+  padding: 20rpx;
+  color: #07C160;
+  font-size: 28rpx;
+}
+
+/* 请假表单 */
+.leave-form {
+  padding: 0 30rpx 30rpx;
+}
+.form-group {
+  margin-bottom: 20rpx;
+}
+.form-group-label {
+  display: block;
+  font-size: 26rpx;
+  color: #666666;
+  margin-bottom: 12rpx;
+}
+.form-picker {
+  height: 80rpx;
+  line-height: 80rpx;
+  background-color: #f5f5f5;
+  border-radius: 10rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  color: #333333;
+}
+.picker-placeholder {
+  color: #cccccc;
+}
+.form-textarea {
+  width: 100%;
+  height: 160rpx;
+  background-color: #f5f5f5;
+  border-radius: 10rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+.submit-leave-btn {
+  width: 100%;
+  height: 80rpx;
+  background-color: #FF9800;
+  color: #ffffff;
+  font-size: 30rpx;
+  border-radius: 12rpx;
+  border: none;
+  margin-top: 20rpx;
+}
+
+/* Tab 栏 */
+.tab-bar {
+  display: flex;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 28rpx;
+  color: #666666;
+  position: relative;
+}
+.tab-active {
+  color: #07C160;
+  font-weight: 600;
+}
+.tab-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60rpx;
+  height: 4rpx;
+  background-color: #07C160;
+  border-radius: 2rpx;
+}
+
+/* 历史记录 */
+.record-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 30rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+.record-left {
+  display: flex;
+  flex-direction: column;
+}
+.record-date {
+  font-size: 28rpx;
+  color: #333333;
+  margin-bottom: 4rpx;
+}
+.record-desc {
+  font-size: 24rpx;
+  color: #999999;
+}
+.record-right {
+  text-align: right;
+}
+.record-time {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 4rpx;
+}
+.record-loc {
+  font-size: 22rpx;
+  color: #cccccc;
+}
+.empty-records {
+  text-align: center;
+  padding: 60rpx;
+  color: #999999;
+  font-size: 26rpx;
+}

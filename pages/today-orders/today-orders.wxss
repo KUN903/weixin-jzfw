@@ -1,0 +1,128 @@
+/* pages/today-orders/today-orders.wxss */
+.today-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+
+/* 顶部统计条 */
+.today-summary {
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  padding: 24rpx 30rpx;
+  margin-bottom: 20rpx;
+}
+.summary-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.summary-num {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 4rpx;
+}
+.summary-num.highlight {
+  color: #FF9800;
+}
+.summary-label {
+  font-size: 24rpx;
+  color: #999999;
+}
+.summary-divider {
+  width: 2rpx;
+  height: 50rpx;
+  background-color: #f0f0f0;
+}
+
+/* 工单卡片 */
+.order-card {
+  background-color: #ffffff;
+  margin: 0 20rpx 20rpx;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
+}
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+.order-id {
+  font-size: 24rpx;
+  color: #999999;
+}
+.order-body {
+  margin-bottom: 20rpx;
+}
+.order-row {
+  display: flex;
+  margin-bottom: 12rpx;
+}
+.order-label {
+  width: 140rpx;
+  font-size: 26rpx;
+  color: #999999;
+  flex-shrink: 0;
+}
+.order-value {
+  font-size: 26rpx;
+  color: #333333;
+  flex: 1;
+}
+
+/* 操作按钮 */
+.order-actions {
+  display: flex;
+  gap: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f5f5f5;
+}
+.action-btn {
+  flex: 1;
+  height: 68rpx;
+  font-size: 26rpx;
+  border-radius: 10rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  line-height: 68rpx;
+}
+.accept-btn {
+  background-color: #07C160;
+  color: #ffffff;
+}
+.contact-btn {
+  background-color: #E3F2FD;
+  color: #1976D2;
+}
+.done-btn {
+  background-color: #FF9800;
+  color: #ffffff;
+}
+
+/* 全部工单入口 */
+.all-orders-entry {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30rpx;
+  color: #07C160;
+  font-size: 28rpx;
+}
+.entry-arrow {
+  margin-left: 8rpx;
+  font-size: 32rpx;
+}
+
+/* 空状态补充 */
+.empty-sub {
+  color: #cccccc;
+  font-size: 24rpx;
+  margin-top: 10rpx;
+}

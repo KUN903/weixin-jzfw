@@ -1,0 +1,17 @@
+<!-- pages/change-phone/change-phone.wxml -->
+<view class="cp-container">
+  <view class="form-card">
+    <view class="form-item">
+      <text class="form-label">当前密码</text>
+      <input class="form-input" type="password" placeholder="输入密码以验证身份" placeholder-class="ph" value="{{password}}" bindinput="onPasswordInput"/>
+    </view>
+    <view class="form-item">
+      <text class="form-label">新手机号</text>
+      <input class="form-input" type="number" maxlength="11" placeholder="请输入新手机号" placeholder-class="ph" value="{{newPhone}}" bindinput="onPhoneInput"/>
+    </view>
+  </view>
+
+  <view class="submit-area">
+    <button class="submit-btn" bindtap="onSubmit">确认更换</button>
+  </view>
+</view>

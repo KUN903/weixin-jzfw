@@ -1,4 +1,4 @@
-// pages/mine/mine.js - 个人中心（含角色切换）
+// pages/mine/mine.js - 个人中心
 const app = getApp();
 
 Page({
@@ -17,15 +17,7 @@ Page({
       serving: 0,
       waitReview: 0
     },
-    // 角色相关
-    role: 'user', // user | worker | admin
-    roleAlias: '普通用户',
-    roles: [
-      { key: 'user', name: '客户端', icon: '\u{1F3E0}' },
-      { key: 'worker', name: '师傅端', icon: '\u{1F468}\u200D\u{1F527}' },
-      { key: 'admin', name: '管理端', icon: '\u{1F4CA}' }
-    ],
-    showRolePicker: false,
+    role: 'user', // user | worker | admin（由登录决定）
     // 师傅端数据
     workerStats: {
       todayOrders: 0,
@@ -45,16 +37,16 @@ Page({
   },
 
   onLoad() {
-    // 从存储恢复角色
     const savedRole = wx.getStorageSync('app_role') || 'user';
     app.globalData.role = savedRole;
-    this.setData({ role: savedRole, roleAlias: this.getRoleAlias(savedRole) });
+    this.setData({ role: savedRole });
     this.getUserInfo();
   },
 
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 3 });
+      const tabIndex = this.data.role === 'worker' ? 1 : 3;
+      this.getTabBar().setData({ selected: tabIndex });
     }
     this.getUserInfo();
     this.loadRoleData();
@@ -73,11 +65,6 @@ Page({
         }
       });
     }
-  },
-
-  getRoleAlias(role) {
-    const map = { user: '普通用户', worker: '服务师傅', admin: '管理员' };
-    return map[role] || '普通用户';
   },
 
   // 加载当前角色数据
@@ -208,83 +195,6 @@ Page({
     }
   },
 
-  // ========== 角色切换 ==========
-  onToggleRolePicker() {
-    this.setData({ showRolePicker: !this.data.showRolePicker });
-  },
-
-  onSwitchRole(e) {
-    const role = e.currentTarget.dataset.role;
-    if (role === this.data.role) {
-      this.setData({ showRolePicker: false });
-      return;
-    }
-    app.switchRole(role);
-    this.setData({
-      role,
-      roleAlias: this.getRoleAlias(role),
-      showRolePicker: false
-    });
-    // 切换到师傅端时，查询 workers 表获取 workerId
-    if (role === 'worker') {
-      this.loadWorkerIdentity().then(() => this.loadRoleData());
-    } else {
-      this.loadRoleData();
-    }
-  },
-
-  // 通过 phone 匹配，找到当前用户在 workers 表中的 ID
-  async loadWorkerIdentity() {
-    const userId = app.globalData.userInfo?.id || 1;
-    try {
-      // 1. 先尝试用 phone 关联
-      const res = await wx.cloud.callFunction({
-        name: 'dbQuery',
-        data: {
-          sql: `SELECT w.id FROM workers w 
-                INNER JOIN users u ON w.phone = u.phone AND w.phone != '' 
-                WHERE u.id = ${userId} AND w.status = 1 LIMIT 1`
-        }
-      });
-      if (res.result?.data?.length > 0) {
-        app.globalData.workerId = res.result.data[0].id;
-        return;
-      }
-    } catch (err) {
-      console.warn('phone匹配worker失败:', err);
-    }
-    // 2. 降级：通过最近订单反查师傅（适用于已下单后查看的demo场景）
-    try {
-      const orderRes = await wx.cloud.callFunction({
-        name: 'dbQuery',
-        data: {
-          sql: `SELECT o.worker_id as id FROM orders o 
-                INNER JOIN workers w ON o.worker_id = w.id AND w.status = 1
-                WHERE o.user_id = ${userId} AND !(o.worker_id <=> NULL) 
-                ORDER BY o.created_at DESC LIMIT 1`
-        }
-      });
-      if (orderRes.result?.data?.length > 0) {
-        app.globalData.workerId = orderRes.result.data[0].id;
-        return;
-      }
-    } catch (err) {
-      console.warn('通过订单反查worker失败:', err);
-    }
-    // 3. 最后降级：取第一个可用师傅
-    try {
-      const fallback = await wx.cloud.callFunction({
-        name: 'dbQuery',
-        data: { sql: 'SELECT id FROM workers WHERE status = 1 AND verify_status = 1 LIMIT 1' }
-      });
-      if (fallback.result?.data?.length > 0) {
-        app.globalData.workerId = fallback.result.data[0].id;
-      }
-    } catch (err) {
-      console.error('获取workerId失败:', err);
-    }
-  },
-
   // ========== 登录 ==========
   onLogin() {
     if (this.data.isLogin) return;
@@ -330,13 +240,11 @@ Page({
     wx.setStorageSync('order_active_tab', tab);
   },
 
-  // 师傅端-查看今日订单
   onViewWorkerOrders() {
     wx.navigateTo({ url: '/pages/order-list/order-list' });
-    wx.setStorageSync('order_active_tab', 2); // 进行中tab
+    wx.setStorageSync('order_active_tab', 2);
   },
 
-  // 管理员端-查看待处理订单
   onViewAdminOrders() {
     wx.navigateTo({ url: '/pages/order-list/order-list' });
     wx.setStorageSync('order_active_tab', 0);

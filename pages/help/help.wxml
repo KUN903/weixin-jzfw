@@ -1,0 +1,75 @@
+<!-- pages/help/help.wxml - 使用帮助 -->
+<view class="help-container">
+
+  <!-- 搜索框 -->
+  <view class="search-bar">
+    <view class="search-input-wrapper">
+      <text class="search-icon">🔍</text>
+      <input 
+        class="search-input" 
+        placeholder="搜索问题..." 
+        placeholder-class="search-placeholder"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+      />
+    </view>
+  </view>
+
+  <!-- 分类 Tab -->
+  <scroll-view scroll-x class="category-tabs">
+    <view class="category-item {{activeCategory === item.key ? 'cat-active' : ''}}" 
+          wx:for="{{categories}}" wx:key="key" 
+          bindtap="onCategoryChange" data-key="{{item.key}}">
+      {{item.name}}
+    </view>
+  </scroll-view>
+
+  <!-- 教程区域 -->
+  <view class="tutorial-section">
+    <view class="tutorial-header">
+      <text class="tutorial-icon">{{tutorials[activeCategory].icon}}</text>
+      <text class="tutorial-title">{{tutorials[activeCategory].title}}</text>
+    </view>
+    
+    <view class="tutorial-steps">
+      <view class="step-item" wx:for="{{tutorials[activeCategory].steps}}" wx:key="title">
+        <view class="step-index">{{index + 1}}</view>
+        <view class="step-content">
+          <text class="step-title">{{item.title}}</text>
+          <text class="step-desc">{{item.desc}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- FAQ 区域 -->
+  <view class="section-card faq-section">
+    <view class="section-title">常见问题</view>
+    
+    <view wx:if="{{filteredFaq.length > 0}}">
+      <view class="faq-item" wx:for="{{filteredFaq}}" wx:key="q" bindtap="onFaqToggle" data-index="{{index}}">
+        <view class="faq-question">
+          <text class="faq-q">Q</text>
+          <text class="faq-q-text">{{item.q}}</text>
+          <text class="faq-arrow {{item.open ? 'open' : ''}}">›</text>
+        </view>
+        <view class="faq-answer {{item.open ? 'show' : ''}}">
+          <text class="faq-a">A</text>
+          <text class="faq-a-text">{{item.a}}</text>
+        </view>
+      </view>
+    </view>
+    
+    <view wx:else class="faq-empty">
+      <text>未找到相关问题，请尝试其他关键词</text>
+    </view>
+  </view>
+
+  <!-- 联系客服按钮 -->
+  <view class="contact-section">
+    <button class="contact-btn" bindtap="onContact">
+      <text>📞 联系客服</text>
+    </button>
+  </view>
+
+</view>

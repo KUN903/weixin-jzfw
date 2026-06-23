@@ -9,10 +9,15 @@ App({
       });
     }
 
+    // 恢复角色信息
+    this.globalData.role = wx.getStorageSync('app_role') || 'user';
+    this.globalData.workerId = wx.getStorageSync('workerId') || null;
+    this.globalData.token = wx.getStorageSync('token') || null;
+
     // 获取用户授权定位
     this.getUserLocation();
 
-    // 登录获取用户信息
+    // 微信登录
     this.doLogin();
   },
 
